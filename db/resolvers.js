@@ -17,6 +17,24 @@ const resolvers = {
             const userId = await jwt.verify(token, process.env.SECRET)
 
             return userId
+        },
+        getProducts : async () => {
+            try {
+                const products = await Product.find({})
+                return products
+            } catch (error) {
+              console.log(error);  
+            }
+        },
+        getProduct: async(_, {id})=> {
+            //check if product exists
+            const product = await Product.findById(id)
+
+            if(!product){
+                throw new Error("Product not found")
+            }
+
+            return product
         }
 
     },
