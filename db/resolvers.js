@@ -1,5 +1,6 @@
 //Resolvers
 const User = require('../models/User');
+const Product = require('../models/Product');
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const salt = 10
@@ -61,6 +62,20 @@ const resolvers = {
 
             return {
                 token: createToken(userExists, process.env.SECRET, '24h')
+            }
+        },
+        newProduct: async (_, {input }) => {
+            try{
+                const product = new Product(input);
+
+                //store in db
+
+                const result = await product.save()
+
+                return result
+            }
+            catch(error){
+                console.log(error);
             }
         }
     }
