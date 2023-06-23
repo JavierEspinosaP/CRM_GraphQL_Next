@@ -106,8 +106,22 @@ const resolvers = {
 
             //save in db
 
-            product = await Product.findOneAndUpdate({ _id : id }, input, { new : true});
+            product = await Product.findOneAndUpdate({ _id: id }, input, { new: true });
             return product
+        },
+        deleteProduct: async (_, { id }) => {
+            //check if product exists
+            let product = await Product.findById(id)
+
+            if (!product) {
+                throw new Error("Product not found")
+            }
+
+            //Delete product
+
+            await Product.findOneAndDelete({_id : id});
+
+            return "Producto eliminado"
         }
 
     }
