@@ -9,28 +9,28 @@ require('dotenv').config({ path: '.env' })
 const createToken = (user, secret, expiresIn) => {
     console.log(user);
     const { id, nombre, apellido, email } = user;
-    return jwt.sign({id}, secret, {expiresIn})
+    return jwt.sign({ id }, secret, { expiresIn })
 }
 const resolvers = {
     Query: {
-        getUser: async (_, {token}) => {
+        getUser: async (_, { token }) => {
             const userId = await jwt.verify(token, process.env.SECRET)
 
             return userId
         },
-        getProducts : async () => {
+        getProducts: async () => {
             try {
                 const products = await Product.find({})
                 return products
             } catch (error) {
-              console.log(error);  
+                console.log(error);
             }
         },
-        getProduct: async(_, {id})=> {
+        getProduct: async (_, { id }) => {
             //check if product exists
             const product = await Product.findById(id)
 
-            if(!product){
+            if (!product) {
                 throw new Error("Product not found")
             }
 
@@ -82,8 +82,8 @@ const resolvers = {
                 token: createToken(userExists, process.env.SECRET, '24h')
             }
         },
-        newProduct: async (_, {input }) => {
-            try{
+        newProduct: async (_, { input }) => {
+            try {
                 const product = new Product(input);
 
                 //store in db
@@ -92,10 +92,24 @@ const resolvers = {
 
                 return result
             }
-            catch(error){
+            catch (error) {
                 console.log(error);
             }
+        },
+        updateProduct: async (_, { id, input }) => {
+            //check if product exists
+            let product = await Product.findById(id)
+
+            if (!product) {
+                throw new Error("Product not found")
+            }
+
+            //save in db
+
+            product = await Product.findOneAndUpdate({ _id : id }, input, { new : true});
+            return product
         }
+
     }
 }
 
