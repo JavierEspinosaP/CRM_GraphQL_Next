@@ -120,9 +120,32 @@ const resolvers = {
 
             //Delete product
 
-            await Product.findOneAndDelete({_id : id});
+            await Product.findOneAndDelete({ _id: id });
 
             return "Producto eliminado"
+        },
+        newClient: async (_, { input }, ctx) => {
+            //check if client exists
+            const { email } = input
+            const client = Client.findOne({ email })
+            if (!client) {
+                throw new Error("Client already registered")
+            }
+
+            const newClient = new Client(input);
+
+            //asign seller
+
+            newClient.vendedor = ctx.usuario.id
+            //save in db
+            try {
+   
+                const result = await newClient.save();
+                return result
+            } catch (error) {
+                console.log(error);
+            }
+
         }
 
     }
