@@ -36,6 +36,39 @@ const resolvers = {
             }
 
             return product
+        },
+        getAllClients: async () => {
+            try {
+                const clients = await Client.find({})
+                return clients
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        getClientsSeller:async (_, {}, ctx) => {
+            try {
+                const clients = await Client.find({vendedor: ctx.usuario.id.toString()})
+                return clients
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        getClient: async (_, { id }, ctx) => {
+            //check if client exists
+            const client = await Client.findById(id);
+
+            if (!client) {
+                throw new Error("Client not found")
+            }
+
+            //Seller who creates the client can see it
+
+            if(client.vendedor.toString() !== ctx.usuario.id){
+                throw new Error("Not authorized")
+            }
+
+            return client
+
         }
 
     },
