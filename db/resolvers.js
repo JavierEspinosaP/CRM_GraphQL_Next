@@ -45,9 +45,9 @@ const resolvers = {
                 console.log(error);
             }
         },
-        getClientsSeller:async (_, {}, ctx) => {
+        getClientsSeller: async (_, { }, ctx) => {
             try {
-                const clients = await Client.find({vendedor: ctx.usuario.id.toString()})
+                const clients = await Client.find({ vendedor: ctx.usuario.id.toString() })
                 return clients
             } catch (error) {
                 console.log(error);
@@ -63,7 +63,7 @@ const resolvers = {
 
             //Seller who creates the client can see it
 
-            if(client.vendedor.toString() !== ctx.usuario.id){
+            if (client.vendedor.toString() !== ctx.usuario.id) {
                 throw new Error("Not authorized")
             }
 
@@ -172,12 +172,49 @@ const resolvers = {
             newClient.vendedor = ctx.usuario.id
             //save in db
             try {
-   
+
                 const result = await newClient.save();
                 return result
             } catch (error) {
                 console.log(error);
             }
+
+        },
+        updateClient: async (_, { id, input }, ctx) => {
+            //check if client exists
+            let client = await Client.findById(id);
+
+            if (!client) {
+                throw new Error("Client not found")
+            }
+            //check if vendor is who edits
+
+            if (client.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error("Not authorized")
+            }
+
+            //Save client
+
+            client = await Client.findOneAndUpdate({ _id: id }, input, { new: true });
+            return client
+        },
+        deleteClient: async (_, { id }, ctx) => {
+            //check if client exists
+            let client = await Client.findById(id);
+
+            if (!client) {
+                throw new Error("Client not found")
+            }
+            //check if vendor is who edits
+
+            if (client.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error("Not authorized")
+            }
+
+            //delete client
+
+            await Client.findOneAndDelete({_id : id})
+            return 'Cliente eliminado'
 
         }
 
