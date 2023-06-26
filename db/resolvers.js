@@ -213,8 +213,44 @@ const resolvers = {
 
             //delete client
 
-            await Client.findOneAndDelete({_id : id})
+            await Client.findOneAndDelete({ _id: id })
             return 'Cliente eliminado'
+
+        },
+        newOrder: async (_, { input }, ctx) => {
+            const { cliente } = input
+            //check if client exists
+
+            let clientExists = await Client.findById(cliente);
+
+            if (!clientExists) {
+                throw new Error("Client not found")
+            }
+
+            //check if client belongs to the seller
+
+            if (clientExists.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error("Not authorized")
+            }
+
+            //check if stock is available
+
+            for await (const item of input.pedido) {
+                const {id} = item;
+
+                const product = await Product.findById(id)
+
+                if (item.cantidad > product.stock) {
+                    throw new Error (`El articulo: ${product.nombre}excede la cantidad disponible`)
+
+                }
+            };
+
+            // Crear nuevo pedido
+
+            //asign a seller
+
+            //save in db
 
         }
 
