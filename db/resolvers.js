@@ -2,6 +2,8 @@
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Client = require('../models/Client');
+const Order = require('../models/Order');
+
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const salt = 10
@@ -236,21 +238,33 @@ const resolvers = {
             //check if stock is available
 
             for await (const item of input.pedido) {
-                const {id} = item;
+                const { id } = item;
 
                 const product = await Product.findById(id)
 
                 if (item.cantidad > product.stock) {
-                    throw new Error (`El articulo: ${product.nombre}excede la cantidad disponible`)
+                    throw new Error(`El articulo: ${product.nombre}excede la cantidad disponible`)
+                }
+                else {
+                    if (input.estado !== "CANCELADO") {
+                        //subtract to product's stock
+                        product.stock = product.stock - item.cantidad
+                        await product.save()
+                    }
 
                 }
             };
 
-            // Crear nuevo pedido
+            // create new order
+            const newOrder = new Order(input);
 
             //asign a seller
+            newOrder.vendedor = ctx.usuario.id
 
             //save in db
+
+            const result = await newOrder.save();
+            return result
 
         }
 
