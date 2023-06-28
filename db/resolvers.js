@@ -71,6 +71,14 @@ const resolvers = {
 
             return client
 
+        },
+        getAllOrders: async () => {
+            try {
+                const orders = await Order.find({})
+                return orders
+            } catch (error) {
+                console.log(error);
+            }
         }
 
     },
