@@ -79,6 +79,29 @@ const resolvers = {
             } catch (error) {
                 console.log(error);
             }
+        },
+        getOrdersBySeller: async (_, { }, ctx) => {
+            try {
+                const orders = await Order.find({ vendedor: ctx.usuario.id })
+                return orders
+            } catch (error) {
+                E
+                console.log(error);
+            }
+        },
+        getOrderById: async (_, { id }, ctx) => {
+            //check if the order exists
+            const order = await Order.findById(id)
+            if (!order) {
+                throw new Error("Order not found")
+            }
+            //Only who created it can see the order
+            if (order.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error("Action not allowed")
+            }
+            //return it
+
+            return order
         }
 
     },
@@ -274,6 +297,52 @@ const resolvers = {
             const result = await newOrder.save();
             return result
 
+        },
+        updateOrder: async (_, { id, input }, ctx) => {
+
+            const { cliente } = input;
+            //check if the order exists
+            const order = await Order.findById(id)
+            if (!order) {
+                throw new Error("Order not found")
+            }
+
+            //check if client exists
+            console.log(cliente);
+            const clientExist = await Client.findById(cliente)
+            if (!clientExist) {
+                throw new Error("Client not found")
+            }
+            //check if client and order belongs to seller
+
+            if (clientExist.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error("Not authorized")
+            }
+
+            //check stock
+
+            for await (const item of input.pedido) {
+                const { id } = item;
+
+                const product = await Product.findById(id)
+
+                if (item.cantidad > product.stock) {
+                    throw new Error(`El articulo: ${product.nombre}excede la cantidad disponible`)
+                }
+                else {
+                    if (input.estado !== "CANCELADO") {
+                        //subtract to product's stock
+                        product.stock = product.stock - item.cantidad
+                        await product.save() 
+                    }
+
+                }
+            };
+
+            //save order
+
+            const result = await Order.findOneAndUpdate({_id: id}, input, {new: true})
+            return result
         }
 
     }

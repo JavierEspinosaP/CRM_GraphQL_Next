@@ -82,8 +82,8 @@ const typeDefs = gql`
 
     input OrderInput {
         pedido: [OrderProductInput]
-        total : Float!
-        cliente: ID!
+        total : Float
+        cliente: ID
         estado: OrderState
     }
 
@@ -108,6 +108,8 @@ const typeDefs = gql`
 
         #Pedidos
         getAllOrders: [Order]
+        getOrdersBySeller: [Order]
+        getOrderById(id: ID!): Order
 
     }
 
@@ -128,6 +130,7 @@ const typeDefs = gql`
 
         #Orders
         newOrder(input: OrderInput) : Order
+        updateOrder(id: ID!, input: OrderInput! ) : Order
     }
 
 `;
