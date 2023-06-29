@@ -333,7 +333,7 @@ const resolvers = {
                     if (input.estado !== "CANCELADO") {
                         //subtract to product's stock
                         product.stock = product.stock - item.cantidad
-                        await product.save() 
+                        await product.save()
                     }
 
                 }
@@ -341,9 +341,29 @@ const resolvers = {
 
             //save order
 
-            const result = await Order.findOneAndUpdate({_id: id}, input, {new: true})
+            const result = await Order.findOneAndUpdate({ _id: id }, input, { new: true })
             return result
+        },
+        deleteOrder: async (_, { id }, ctx) => {
+            //check if order exists
+            const order = await Order.findById(id)
+
+            if (!order) {
+                throw new Error("Order not found")
+            }
+            //check if who wants to delete is the owner of the order
+
+            if (order.vendedor.toString() !== ctx.usuario.id){
+                throw new Error("Not authorized")
+            }
+
+            //delete from database
+
+            await Order.findOneAndDelete({ _id: id});
+            return "Order deleted"
         }
+
+
 
     }
 }
