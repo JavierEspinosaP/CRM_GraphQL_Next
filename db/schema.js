@@ -49,6 +49,11 @@ const typeDefs = gql`
         cantidad: Int
     }
 
+    type TopClient {
+        total: Float
+        cliente: [Client]
+    }
+
     input UserInput {
         nombre: String!
         apellido: String!
@@ -111,6 +116,9 @@ const typeDefs = gql`
         getOrdersBySeller: [Order]
         getOrderById(id: ID!): Order
         getOrdersByState(estado: OrderState!): [Order]
+
+        #Busquedas avanzadas
+        getBestClients: [TopClient]
 
     }
 

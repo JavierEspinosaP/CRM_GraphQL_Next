@@ -106,6 +106,27 @@ const resolvers = {
         getOrdersByState: async (_, { estado }, ctx) => {
             const orders = await Order.find({ vendedor: ctx.usuario.id, estado })
             return orders
+        },
+        getBestClients: async () => {
+            const clients = await Order.aggregate([
+                { $match: {estado: "COMPLETADO"} },
+                { $group: {
+                    _id:"$cliente",
+                    total: { $sum: '$total'}
+                } },
+                {
+                    $lookup: {
+                        from: 'clientes',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'cliente'
+                    }
+                },
+                {
+                    $sort: { total: -1 }
+                }
+            ]);
+            return clients
         }
 
 
