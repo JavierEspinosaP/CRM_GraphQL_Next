@@ -110,6 +110,7 @@ const typeDefs = gql`
         getAllOrders: [Order]
         getOrdersBySeller: [Order]
         getOrderById(id: ID!): Order
+        getOrdersByState(estado: OrderState!): [Order]
 
     }
 

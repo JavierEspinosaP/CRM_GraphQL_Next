@@ -102,7 +102,12 @@ const resolvers = {
             //return it
 
             return order
+        },
+        getOrdersByState: async (_, { estado }, ctx) => {
+            const orders = await Order.find({ vendedor: ctx.usuario.id, estado })
+            return orders
         }
+
 
     },
     Mutation: {
@@ -353,17 +358,15 @@ const resolvers = {
             }
             //check if who wants to delete is the owner of the order
 
-            if (order.vendedor.toString() !== ctx.usuario.id){
+            if (order.vendedor.toString() !== ctx.usuario.id) {
                 throw new Error("Not authorized")
             }
 
             //delete from database
 
-            await Order.findOneAndDelete({ _id: id});
+            await Order.findOneAndDelete({ _id: id });
             return "Order deleted"
         }
-
-
 
     }
 }
