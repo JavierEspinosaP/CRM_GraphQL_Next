@@ -152,6 +152,11 @@ const resolvers = {
 
             ]);
             return sellers
+        },
+        searchProduct: async (_, {texto}) => {
+            const products= await Product.find({$text: {$search: texto}}).limit(10)
+
+            return products
         }
 
 
