@@ -127,6 +127,31 @@ const resolvers = {
                 }
             ]);
             return clients
+        },
+        getBestSellers: async () => {
+            const sellers = await Order.aggregate([
+                { $match : {estado: "COMPLETADO"}},
+                { $group: {
+                    _id: "$vendedor",
+                    total: { $sum : 'total'}
+                }},
+                {
+                    $lookup: {
+                        from: 'usuarios',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'vendedor'
+                    }
+                },
+                {
+                    $limit: 3
+                },
+                {
+                    $sort: { total : -1 }
+                }
+
+            ]);
+            return sellers
         }
 
 
