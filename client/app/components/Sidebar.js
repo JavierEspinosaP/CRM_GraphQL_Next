@@ -2,7 +2,11 @@ import React from 'react'
 
 function Sidebar() {
   return (
-   <h2>Sidebar</h2>
+    <aside >
+      <div className='bg-gray-800 min-h-screen p-5'>
+        <p className='text-white text-2xl font-black'>CRM CLIENTS</p>
+      </div>
+    </aside>
   )
 }
 
