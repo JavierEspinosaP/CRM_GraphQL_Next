@@ -2,7 +2,6 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 import Sidebar from './components/Sidebar'
-import Head from 'next/head';
 
 
 export const metadata = {
@@ -19,16 +18,17 @@ export default function RootLayout({ children }) {
         <script src="https://cdn.tailwindcss.com"></script>
       </head>
       <body className={inter.className}>
-        <div className="bg-gray-200 min-h-screen">
-          <div className='flex min-h-screen'>
-          <Sidebar />
-            <main className='bg-gray-200 min-h-screen p-5'>
-              <div>
-              {children}                
+                <div className="bg-gray-200 min-h-screen">
+                <div className='flex min-h-screen'>
+                <Sidebar />
+                  <main className='bg-gray-200 min-h-screen p-5 '>
+                    <div >
+                    {children}                
+                    </div>
+                  </main>
               </div>
-            </main>
-        </div>
-        </div>
+              </div>
+
       </body>
     </html>
   )
