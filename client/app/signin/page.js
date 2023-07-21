@@ -16,6 +16,18 @@ function SignIn() {
             email:'',
             password:''
         },
+        validationSchema: Yup.object({
+            name: Yup.string()
+                    .required('El nombre es obligatorio'),
+            surname: Yup.string()
+                    .required('El apellido es obligatorio'),
+            email: Yup.string()
+                    .email('El email no es válido')
+                    .required('El email es obligatorio'),
+            password: Yup.string()
+                    .required('El password no puede estar vacío')
+                    .min(6, 'El password debe ser de al menos 6 caracteres')
+        }),
         onSubmit: values => {
             console.log(values);
         }
@@ -37,8 +49,16 @@ function SignIn() {
                         placeholder='John' 
                         value={formik.values.name}
                         onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                         />
                 </div>
+
+                {formik.touched.name && formik.errors.name ? (
+                    <div className='my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2'>
+                       <p>{formik.errors.name}</p>
+                    </div>
+                ) : null}
+
                 <div className='mb-4'>
                     <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='surname'>Apellido</label>
                     <input
@@ -48,8 +68,16 @@ function SignIn() {
                         placeholder='Doe'
                         value={formik.values.surname}
                         onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                          />
                 </div>
+
+                {formik.touched.surname && formik.errors.surname ? (
+                    <div className='my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2'>
+                       <p>{formik.errors.surname}</p>
+                    </div>
+                ) : null}
+
                 <div className='mb-4'>
                     <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='email'>Email</label>
                     <input
@@ -59,8 +87,16 @@ function SignIn() {
                         placeholder='abc@mail.com'
                         value={formik.values.email}
                         onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                         />
                 </div>
+
+                {formik.touched.email && formik.errors.email ? (
+                    <div className='my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2'>
+                       <p>{formik.errors.email}</p>
+                    </div>
+                ) : null}
+
                 <div className='mb-4'>
                     <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='password'>Password</label>
                     <input
@@ -70,8 +106,16 @@ function SignIn() {
                         placeholder='1234abcde'
                         value={formik.values.password}
                         onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                          />
                 </div>
+
+                {formik.touched.password && formik.errors.password ? (
+                    <div className='my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2'>
+                       <p>{formik.errors.password}</p>
+                    </div>
+                ) : null}
+
                 <input
                     type='submit'
                     className='bg-gray-700 w-full mt-5 p-2 text-white uppercase hover:bg-gray-900'
