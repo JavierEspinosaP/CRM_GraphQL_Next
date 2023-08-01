@@ -3,17 +3,17 @@
 import React from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import {gql} from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
 
 
-const QUERY = gql`
-query getProducts{
-    getProducts{
+const NEW_ACCOUNT = gql`
+mutation newUser($input: UserInput) {
+    newUser(input: $input) {
         id
         nombre
-        stock
-        precio
+        apellido
+        email
     }
 }`
 
@@ -21,9 +21,8 @@ function SignIn() {
 
     //Get products of GraphQL
 
-    const {data} = useSuspenseQuery(QUERY);
+    const [newUser] = useMutation(NEW_ACCOUNT)
 
-    console.log(data);
 
     //Form validation
 
@@ -46,10 +45,29 @@ function SignIn() {
                 .required('El password no puede estar vacío')
                 .min(6, 'El password debe ser de al menos 6 caracteres')
         }),
-        onSubmit: values => {
-            console.log(values);
+        onSubmit: async values => {
+
+            const { name, surname, email, password } = values;
+
+            try {
+                const {data} = await newUser({
+                    variables: {
+                        input: {
+                            nombre: name,
+                            apellido: surname,
+                            email,
+                            password
+                        }
+                    }
+
+                })
+                console.log(data);
+            } catch (error) {
+                console.log(error);
+            }
         }
     })
+
 
     return (
         <section className='min-h-screen flex flex-col justify-center w-screen'>
@@ -67,7 +85,7 @@ function SignIn() {
                                 placeholder='John'
                                 value={formik.values.name}
                                 onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
+                            // onBlur={formik.handleBlur}
                             />
                         </div>
 
@@ -86,7 +104,7 @@ function SignIn() {
                                 placeholder='Doe'
                                 value={formik.values.surname}
                                 onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
+                            // onBlur={formik.handleBlur}
                             />
                         </div>
 
@@ -105,7 +123,7 @@ function SignIn() {
                                 placeholder='abc@mail.com'
                                 value={formik.values.email}
                                 onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
+                            // onBlur={formik.handleBlur}
                             />
                         </div>
 
@@ -124,7 +142,7 @@ function SignIn() {
                                 placeholder='1234abcde'
                                 value={formik.values.password}
                                 onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
+                            // onBlur={formik.handleBlur}
                             />
                         </div>
 
