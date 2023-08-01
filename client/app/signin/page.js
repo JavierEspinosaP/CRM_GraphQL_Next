@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
+import {useState} from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { gql, useMutation } from '@apollo/client'
-import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
+// import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
+import {useRouter} from 'next/navigation'
 
 
 const NEW_ACCOUNT = gql`
@@ -19,9 +20,18 @@ mutation newUser($input: UserInput) {
 
 function SignIn() {
 
-    //Get products of GraphQL
+    //State for new user message
+
+    const [message, setMessage] = useState(null)
+    const [colour, setColour] = useState('bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto')
+
+    //Post new user
 
     const [newUser] = useMutation(NEW_ACCOUNT)
+
+    //Routing
+
+    const router = useRouter()
 
 
     //Form validation
@@ -62,15 +72,35 @@ function SignIn() {
 
                 })
                 console.log(data);
+
+                setColour('bg-green-300 py-2 px-3 w-full my-3 max-w-sm text-center mx-auto')
+                setMessage(`User ${data.newUser.nombre} created successfully`)
+                setTimeout(() => {
+                    setMessage(null)
+                    router.push('/login')
+                }, 3000);
             } catch (error) {
-                console.log(error);
+                setColour('bg-red-300 py-2 px-3 w-full my-3 max-w-sm text-center mx-auto')
+                setMessage(error.message.replace('ApolloError: ', ''))
+                setTimeout(() => {
+                    setMessage(null)
+                }, 3000);
             }
         }
     })
 
+    const showMessage = () => {
+        return(
+            <div className={colour}>
+                <p>{message}</p>
+            </div>
+        )
+    }
+
 
     return (
         <section className='min-h-screen flex flex-col justify-center w-screen'>
+            {message && showMessage()}
             <h1 className='text-center'>Sign In</h1>
             <div className='flex justify-center'>
                 <div className=' w-full max-w-sm'>
