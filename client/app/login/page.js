@@ -1,11 +1,31 @@
 'use client'
 
-import React from 'react'
+import { useState } from 'react'
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { gql, useMutation } from '@apollo/client'
+import { setCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation'
+
+const USER_AUTH = gql`mutation AuthUser ($input: AuthInput) {
+    authUser(input: $input) {
+      token
+    }
+  }`
 
 function Login() {
+
+    const [message, setMessage] = useState(null)
+    const [colour, setColour] = useState('bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto')
+
+    //Routing
+
+    const router = useRouter()
+
+    //Mutation for auth user
+
+    const [AuthUser] = useMutation(USER_AUTH)
 
     const formik = useFormik({
         initialValues: {
@@ -14,22 +34,61 @@ function Login() {
         },
         validationSchema: Yup.object({
             email: Yup.string()
-                        .email('Invalid email')
-                        .required('Email should not be empty'),
+                .email('Invalid email')
+                .required('Email should not be empty'),
             password: Yup.string()
-                            .required('Password is required')
+                .required('Password is required')
         }),
-        onSubmit: values => {
-            console.log(values);
+        onSubmit: async values => {
+
+            const { email, password } = values
+
+            try {
+                const { data } = await AuthUser({
+                    variables: {
+                        input: {
+                            email,
+                            password
+                        }
+                    }
+                })
+
+
+                //set token in cookie
+                const { token } = data.authUser
+                const expires = new Date();
+                expires.setHours(expires.getHours() + 3);
+
+                setCookie('session-token', token, { expires, hhtpOnly: true })
+                router.push('/')
+
+
+            } catch (error) {
+                setColour('bg-red-300 py-2 px-3 w-full my-3 max-w-sm text-center mx-auto')
+                setMessage(error.message.replace('ApolloError: ', ''))
+                setTimeout(() => {
+                    setMessage(null)
+                }, 3000);
+            }
         }
     })
+
+    const showMessage = () => {
+        return (
+            <div className={colour}>
+                <p>{message}</p>
+            </div>
+        )
+    }
+
     return (
         <section className='min-h-screen flex flex-col justify-center w-screen'>
+            {message && showMessage()}
             <h1 className='text-center'>Login</h1>
             <div className='flex justify-center'>
                 <div className=' w-full max-w-sm'>
                     <form className='bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4'
-                            onSubmit={formik.handleSubmit}>
+                        onSubmit={formik.handleSubmit}>
                         <div className='mb-4'>
                             <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='email'>Email</label>
                             <input

@@ -2,7 +2,6 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 import { ApolloWrapper } from "./config/apolloWrapper";
-
 import Sidebar from './components/Sidebar'
 
 
@@ -20,14 +19,14 @@ export default function RootLayout({ children }) {
         <script src="https://cdn.tailwindcss.com"></script>
       </head>
       <body className={inter.className}>
-        <ApolloWrapper>
-        <div className="bg-gray-200 min-h-screen flex">
-          <Sidebar />
-          <main className='bg-gray-200 min-h-screen p-5 '>
-            {children}
-          </main>
-        </div>          
-        </ApolloWrapper>
+          <ApolloWrapper>
+            <div className="bg-gray-200 min-h-screen flex">
+              <Sidebar />
+              <main className='bg-gray-200 min-h-screen p-5 '>
+                {children}
+              </main>
+            </div>
+          </ApolloWrapper>
       </body>
     </html>
   )
