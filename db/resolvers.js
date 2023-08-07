@@ -17,9 +17,13 @@ const createToken = (user, secret, expiresIn) => {
 const resolvers = {
     Query: {
         getUser: async (_, { token }) => {
-            const userId = await jwt.verify(token, process.env.SECRET)
+            try {
+                const userId = await jwt.verify(token, process.env.SECRET)
+                return userId
+            } catch (error) {
+                console.log(error);
+            }
 
-            return userId
         },
         getProducts: async () => {
             try {
@@ -106,6 +110,61 @@ const resolvers = {
         getOrdersByState: async (_, { estado }, ctx) => {
             const orders = await Order.find({ vendedor: ctx.usuario.id, estado })
             return orders
+        },
+        getBestClients: async () => {
+            const clients = await Order.aggregate([
+                { $match: { estado: "COMPLETADO" } },
+                {
+                    $group: {
+                        _id: "$cliente",
+                        total: { $sum: '$total' }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'clientes',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'cliente'
+                    }
+                },
+                {
+                    $sort: { total: -1 }
+                }
+            ]);
+            return clients
+        },
+        getBestSellers: async () => {
+            const sellers = await Order.aggregate([
+                { $match: { estado: "COMPLETADO" } },
+                {
+                    $group: {
+                        _id: "$vendedor",
+                        total: { $sum: 'total' }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'usuarios',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'vendedor'
+                    }
+                },
+                {
+                    $limit: 3
+                },
+                {
+                    $sort: { total: -1 }
+                }
+
+            ]);
+            return sellers
+        },
+        searchProduct: async (_, { texto }) => {
+            const products = await Product.find({ $text: { $search: texto } }).limit(10)
+
+            return products
         }
 
 
