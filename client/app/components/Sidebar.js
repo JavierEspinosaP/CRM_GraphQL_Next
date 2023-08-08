@@ -15,7 +15,7 @@ function Sidebar() {
   return (
     <>
       {router === '/login' || router === '/signin' ? <></> :
-        <aside className='bg-gray-800 min-h-screen p-5'>
+        <aside className='bg-gray-800 min-h-screen p-5 w-1/5 min-w-min max-w-sm'>
           <h2 className='text-white font-black'>CRM CLIENTS</h2>
           <nav className='mt-5 list-none'>
             <li className={router === '/' ? 'bg-blue-800 p-1' : 'p-1'}>

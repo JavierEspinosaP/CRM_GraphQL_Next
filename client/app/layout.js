@@ -20,9 +20,9 @@ export default function RootLayout({ children }) {
       </head>
       <body className={inter.className}>
           <ApolloWrapper>
-            <div className="bg-gray-200 min-h-screen flex">
+            <div className="bg-gray-200 min-h-screen flex ">
               <Sidebar />
-              <main className='bg-gray-200 min-h-screen p-5 '>
+              <main className='bg-gray-200 min-h-screen p-5 w-full w-lg min-w-min'>
                 {children}
               </main>
             </div>
