@@ -3,6 +3,7 @@
 import { gql, useQuery } from '@apollo/client'
 import Header from './components/Header';
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const GET_CLIENTS_SELLER = gql`
 query getClientsSeller{
@@ -24,7 +25,6 @@ const Index = () => {
 
   const { data, loading, error } = useQuery(GET_CLIENTS_SELLER)
 
-  console.log(data);
   if (loading) {
     return 'Cargando'
   }
@@ -40,7 +40,11 @@ const Index = () => {
       <Header />
       <h1 className='text-2xl text-gray-800 font-light'>Clientes</h1>
 
+    <Link href='/newClient'>
+      <p className="bg-blue-800 py-2 px-5 mt-3 inline-block text-white rounded text-sm hover:bg-gray-400 uppercase font-bold">Nuevo Cliente</p>
+    </Link>
       {loading ? <p className='text-2xl text-gray-800 font-light'>Cargando...</p> :
+
 
         <table className='table-auto shadow-md mt-10 w-full w-lg'>
           <thead className='bg-gray-800'>
