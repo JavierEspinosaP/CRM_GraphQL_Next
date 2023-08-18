@@ -38,15 +38,11 @@ function Header() {
         return 'Cargando'
       }
 
-    //if no data
 
-    if (!data) {
-        return router.push('/login')
-    }
 
     return (
         <header className="flex justify-end">
-            {data ? <p className='mr-2'>Hola {data.getUser.nombre}</p> : null}
+            {data.getUser ? <p className='mr-2'>Hola {data.getUser.nombre}</p> : null}
             <button onClick={() => closeSession()}
                 type='button'
                 className='bg-blue-800 w-full sm:w-auto font-bold uppercase text-xs rounded py-1 px-2 text-white shadow-md'
