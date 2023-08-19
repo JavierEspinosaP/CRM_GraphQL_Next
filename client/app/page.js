@@ -29,7 +29,10 @@ const Index = () => {
 
   //Apollo query
 
-  const { data, loading, error } = useQuery(GET_CLIENTS_SELLER)
+  const { data, loading, error } = useQuery(GET_CLIENTS_SELLER, {
+    fetchPolicy: 'network-only', // La primera vez que se ejecuta la query ignora la caché, ya que es null y si no se indica esta opción, no mostrará resultados
+    nextFetchPolicy: 'cache-first', // A partir de la segunda vez vuelve a su estado default que es primero leer si hay datos en caché
+  })
 
   useEffect(() => {
 
@@ -39,8 +42,6 @@ const Index = () => {
       return router.push('/login')
     }
   }, [])
-  
-
 
 
   return (
@@ -67,6 +68,8 @@ const Index = () => {
             </tr>
           </thead>
           <tbody className='bg-white'>
+            {/* {data.getClientsSeller.map(cliente => (
+              <Client key={cliente.id} cliente={cliente} />))} */}
             {data.getClientsSeller !== null? data.getClientsSeller.map(cliente => (
               <Client key={cliente.id} cliente={cliente} />
             )):null}
