@@ -60,8 +60,8 @@ function Productos() {
           <thead className='bg-gray-800'>
             <tr className='text-white'>
               <th className='w-1/5 py-2'>Nombre</th>
-              <th className='w-1/5 py-2'>Precio</th>
-              <th className='w-1/5 py-2'>Stock</th>
+              <th className='w-1/5 py-2'>Precio (€)</th>
+              <th className='w-1/5 py-2'>Stock (uds)</th>
               <th className='w-1/5 py-2'></th>
               <th className='w-1/5 py-2'></th>
             </tr>
