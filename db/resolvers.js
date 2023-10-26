@@ -10,20 +10,14 @@ const salt = 10
 require('dotenv').config({ path: '.env' })
 
 const createToken = (user, secret, expiresIn) => {
-    console.log(user);
+    console.log('esto es user', user);
     const { id, nombre, apellido, email } = user;
-    return jwt.sign({ id }, secret, { expiresIn })
+    return jwt.sign({ id, nombre, apellido, email  }, secret, { expiresIn })
 }
 const resolvers = {
     Query: {
-        getUser: async (_, { token }) => {
-            try {
-                const userId = await jwt.verify(token, process.env.SECRET)
-                return userId
-            } catch (error) {
-                console.log(error);
-            }
-
+        getUser: async (_, {}, ctx) => {
+            return ctx.usuario
         },
         getProducts: async () => {
             try {
@@ -53,6 +47,7 @@ const resolvers = {
         },
         getClientsSeller: async (_, { }, ctx) => {
             try {
+                console.log('esto es ctx: ',ctx);
                 const clients = await Client.find({ vendedor: ctx.usuario.id.toString() })
                 return clients
             } catch (error) {

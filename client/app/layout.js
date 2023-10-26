@@ -3,6 +3,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 import { ApolloWrapper } from "./config/apolloWrapper";
 import Sidebar from './components/Sidebar'
+import OrdersState from "./context/pedidos/ordersState";
 
 
 
@@ -21,6 +22,8 @@ export default function RootLayout({ children }) {
       </head>
       <body className={inter.className}>
           <ApolloWrapper>
+            <OrdersState>
+
             <div className="bg-gray-200 min-h-screen flex ">
               <Sidebar />
               <main className='bg-gray-200 min-h-screen p-5 w-full w-lg min-w-min'>
@@ -28,6 +31,7 @@ export default function RootLayout({ children }) {
                 {children}
               </main>
             </div>
+            </OrdersState>
           </ApolloWrapper>
       </body>
     </html>
