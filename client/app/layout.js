@@ -23,11 +23,9 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
           <ApolloWrapper>
             <OrdersState>
-
             <div className="bg-gray-200 min-h-screen flex ">
               <Sidebar />
               <main className='bg-gray-200 min-h-screen p-5 w-full w-lg min-w-min'>
-
                 {children}
               </main>
             </div>
