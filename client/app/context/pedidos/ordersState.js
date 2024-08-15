@@ -16,19 +16,38 @@ const OrderState = ({children}) => {
     //Order state
 
     const initialState = {
-        client: [],
+        client: {},
         products: [],
         total: 0
     }
 
     const [ state, dispatch ] = useReducer(OrdersReducer, initialState)
 
-    const helloWorldInUseReducer = () => {
-        console.log('hello world');
+
+    //Modify client
+
+    const addClient = (client) => {
+        dispatch({
+           type: SELECT_CLIENT,
+           payload: client
+        })
+    }
+
+    //Modify Products
+
+    const addProduct = products => {
+        dispatch({
+            type: SELECT_PRODUCT,
+            payload: products
+        });
+        
     }
 
     return (
-        <OrdersContext.Provider value={{ helloWorldInUseReducer }}>
+        <OrdersContext.Provider value={{
+            addClient,
+            addProduct
+            }}>
             {children}
         </OrdersContext.Provider>
     );
