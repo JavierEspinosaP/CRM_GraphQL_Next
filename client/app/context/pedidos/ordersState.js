@@ -8,7 +8,8 @@ import OrdersReducer from './ordersReducer';
 import {
     SELECT_CLIENT,
     SELECT_PRODUCT,
-    PRODUCT_QUANTITY
+    PRODUCT_QUANTITY,
+    REFRESH_TOTAL
 } from '../../types';
 
 const OrderState = ({children}) => {
@@ -35,18 +36,55 @@ const OrderState = ({children}) => {
 
     //Modify Products
 
-    const addProduct = products => {
+    const addProduct = selectedProducts => {
+
+        let newState;
+
+        if (state.products.length > 0) {
+            //Get of second array, a copy to assign of the first one
+            newState = selectedProducts.map(product => {
+                const newObj = state.products.find(productState => productState.id === product.id)
+                return {
+                    ...product,
+                    ...newObj
+                }
+            })
+        } 
+        else {
+            newState = selectedProducts
+        }
+        
         dispatch({
             type: SELECT_PRODUCT,
-            payload: products
+            payload: newState
         });
         
     }
 
+    //Modify quantity
+
+    const productsQuantity = newProduct => {
+        dispatch({
+            type: PRODUCT_QUANTITY,
+            payload: newProduct
+        })        
+    }
+
+
+    const refreshTotal = () => {
+        dispatch({
+            type: REFRESH_TOTAL
+        })    
+    }
+
     return (
         <OrdersContext.Provider value={{
+            products: state.products,
+            total: state.total,
             addClient,
-            addProduct
+            addProduct,
+            productsQuantity,
+            refreshTotal
             }}>
             {children}
         </OrdersContext.Provider>
