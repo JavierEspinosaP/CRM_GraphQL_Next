@@ -32,7 +32,7 @@ function AssignClient() {
 
     const { data, loading, error } = useQuery(GET_CLIENTS_SELLER);
 
-    // console.log(data, loading, error);
+    console.log(data, loading, error);
     
 
     useEffect(() => {

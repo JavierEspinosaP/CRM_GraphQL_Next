@@ -13,6 +13,12 @@ function NewOrder() {
   // Use Context and extract its values
 
   const orderContext = useContext(OrderContext);
+  const {client, products, total} = orderContext
+
+  const validateOrder = () => {
+    return !products.every(product => product.quantity > 0) || total === 0 || client.length === 0 ? " opacity-50 cursor-not-allowed"  : " ";
+    
+  }
 
   return (
     <>
@@ -27,7 +33,7 @@ function NewOrder() {
           
           <button
           type='button'
-          className={` text-white bg-gray-800 w-full mt-5 p-2 uppercase font-bold hover:bg-gray-900`}
+          className={` text-white bg-gray-800 w-full mt-5 p-2 uppercase font-bold hover:bg-gray-900 ${validateOrder()}`}
           >Registrar pedido</button>
         </div>
       </div>
