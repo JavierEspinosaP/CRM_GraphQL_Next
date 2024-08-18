@@ -12,7 +12,6 @@ function OrderSummary() {
     return product.nombre;
   });
 
-  console.log(products);
   
   return (
     <>
