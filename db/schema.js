@@ -38,7 +38,7 @@ const typeDefs = gql`
         id: ID!
         pedido: [OrderGroup]
         total: Float
-        cliente: ID!
+        cliente: Client
         vendedor: ID!
         fecha: String
         estado: OrderState
@@ -47,6 +47,8 @@ const typeDefs = gql`
     type OrderGroup {
         id: ID!
         cantidad: Int
+        nombre: String
+        precio: Float
     }
 
     type TopClient {
@@ -88,6 +90,8 @@ const typeDefs = gql`
     input OrderProductInput {
         id: ID!
         cantidad: Int
+        nombre: String
+        precio: Float
     }
 
     input OrderInput {
@@ -98,9 +102,9 @@ const typeDefs = gql`
     }
 
     enum OrderState {
-        PENDIENTE
-        COMPLETADO
-        CANCELADO
+        COMPLETED
+        CANCELED
+        PENDING
     }
 
     type Query {

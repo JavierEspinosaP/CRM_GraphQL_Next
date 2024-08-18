@@ -81,7 +81,7 @@ const resolvers = {
         },
         getOrdersBySeller: async (_, { }, ctx) => {
             try {
-                const orders = await Order.find({ vendedor: ctx.usuario.id })
+                const orders = await Order.find({ vendedor: ctx.usuario.id }).populate('cliente')
                 return orders
             } catch (error) {
                 E
@@ -108,7 +108,7 @@ const resolvers = {
         },
         getBestClients: async () => {
             const clients = await Order.aggregate([
-                { $match: { estado: "COMPLETADO" } },
+                { $match: { estado: "COMPLETED" } },
                 {
                     $group: {
                         _id: "$cliente",
@@ -131,7 +131,7 @@ const resolvers = {
         },
         getBestSellers: async () => {
             const sellers = await Order.aggregate([
-                { $match: { estado: "COMPLETADO" } },
+                { $match: { estado: "COMPLETED" } },
                 {
                     $group: {
                         _id: "$vendedor",
@@ -333,10 +333,10 @@ const resolvers = {
                 const product = await Product.findById(id)
 
                 if (item.cantidad > product.stock) {
-                    throw new Error(`El articulo: ${product.nombre}excede la cantidad disponible`)
+                    throw new Error(`El articulo: ${product.nombre} excede la cantidad disponible`)
                 }
                 else {
-                    if (input.estado !== "CANCELADO") {
+                    if (input.estado !== "CANCELED") {
                         //subtract to product's stock
                         product.stock = product.stock - item.cantidad
                         await product.save()
@@ -389,7 +389,7 @@ const resolvers = {
                     throw new Error(`El articulo: ${product.nombre}excede la cantidad disponible`)
                 }
                 else {
-                    if (input.estado !== "CANCELADO") {
+                    if (input.estado !== "CANCELED") {
                         //subtract to product's stock
                         product.stock = product.stock - item.cantidad
                         await product.save()
