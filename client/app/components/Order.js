@@ -1,16 +1,47 @@
 import React, { useState, useEffect } from "react";
-import {gql, useMutation} from '@apollo/client';
+import { gql, useMutation } from "@apollo/client";
+import Swal from "sweetalert2";
 
 const UPDATE_ORDER = gql`
-mutation updateOrder($id: ID!, $input: OrderInput!) {
-  updateOrder(id: $id, input: $input) {
-    id
-    cliente {
+  mutation updateOrder($id: ID!, $input: OrderInput!) {
+    updateOrder(id: $id, input: $input) {
       id
+      cliente {
+        id
+      }
+      estado
     }
-    estado
   }
-}`
+`;
+
+const DELETE_ORDER = gql`
+  mutation deleteOrder($id: ID!) {
+    deleteOrder(id: $id)
+  }
+`;
+
+const GET_ORDERS = gql`
+  query getOrdersBySeller {
+    getOrdersBySeller {
+      id
+      pedido {
+        cantidad
+        id
+        nombre
+      }
+      cliente {
+        id
+        nombre
+        apellido
+        email
+        telefono
+      }
+      vendedor
+      total
+      estado
+    }
+  }
+`;
 
 export default function Order({ order }) {
   const {
@@ -18,78 +49,100 @@ export default function Order({ order }) {
     total,
     cliente: { nombre, apellido, telefono, email },
     estado,
-    cliente
+    cliente,
   } = order;
 
   //Mutation to change state of an order
 
-  const [updateOrder] = useMutation(UPDATE_ORDER)
+  const [updateOrder] = useMutation(UPDATE_ORDER);
+  const [deleteOrder] = useMutation(DELETE_ORDER, {
+    refetchQueries: [{ query: GET_ORDERS }],
+  });
 
   const [orderState, setOrderState] = useState(estado);
-  const [styleClass, setStyleClass] = useState('');
-
+  const [styleClass, setStyleClass] = useState("");
 
   const handleStateChange = (e) => {
-    changeOrderState(e.target.value)
+    changeOrderState(e.target.value);
   };
 
   useEffect(() => {
     if (orderState) {
-      orderClass()
+      orderClass();
     }
-  }, [orderState])
-
-
-  
+  }, [orderState]);
 
   //Function that modifies the color of the order depending on its state
 
   const orderClass = () => {
-    if (orderState === 'PENDING') {
-      setStyleClass('border-yellow-500')
+    if (orderState === "PENDING") {
+      setStyleClass("border-yellow-500");
+    } else if (orderState === "COMPLETED") {
+      setStyleClass("border-green-500");
+    } else {
+      setStyleClass("border-red-800");
     }
-    else if (orderState === 'COMPLETED') {
-      setStyleClass('border-green-500')
-    }
-    else {
-      setStyleClass('border-red-800')
+  };
 
-    }
-  }
-
-  const changeOrderState = async newState => {
+  const changeOrderState = async (newState) => {
     try {
       const datos = {
-        'variables': {
-          'id': id,
-          'input': {
-            'estado': newState,
-            'cliente': cliente.id
-          }
+        variables: {
+          id: id,
+          input: {
+            estado: newState,
+            cliente: cliente.id,
+          },
+        },
+      };
+      console.log("datos que se envian: ", datos);
 
-        }
-      }
-      console.log('datos que se envian: ',datos);
-      
-      const {data} = await updateOrder({
+      const { data } = await updateOrder({
         variables: {
           id,
           input: {
             estado: newState,
-            cliente: cliente.id
-          }
-        }
+            cliente: cliente.id,
+          },
+        },
       });
 
       setOrderState(data.updateOrder.estado);
-      
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
+  const confirmDeleteOrder = () => {
+    Swal.fire({
+      title: "Deseas eliminar a este pedido?",
+      text: "Esta acción es irrevocable",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar pedido",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.value) {
+        try {
+          const data = await deleteOrder({
+            variables: {
+              id,
+            },
+          });
+          Swal.fire("Eliminado", data.deleteOrder, "success");
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
+  };
 
   return (
-    <div className={`${styleClass} border-t-4 mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg`}>
+    <div
+      className={`${styleClass} border-t-4 mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg`}
+    >
       <div>
         <p className="font-bold text-gray-800">
           Cliente: {nombre} {apellido}
@@ -161,7 +214,10 @@ export default function Order({ order }) {
           <span className="font-light"> {total} €</span>
         </p>
 
-        <button className="uppercase text-xs font-bold flex items-center mt-4 bg-red-800 px-5 py-2 text-white rounded leading-tigh">
+        <button
+          onClick={() => confirmDeleteOrder()}
+          className="uppercase text-xs font-bold flex items-center mt-4 bg-red-800 px-5 py-2 text-white rounded leading-tigh"
+        >
           Eliminar
           <svg
             xmlns="http://www.w3.org/2000/svg"
