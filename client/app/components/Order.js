@@ -1,4 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {gql, useMutation} from '@apollo/client';
+
+const UPDATE_ORDER = gql`
+mutation updateOrder($id: ID!, $input: OrderInput!) {
+  updateOrder(id: $id, input: $input) {
+    id
+    cliente {
+      id
+    }
+    estado
+  }
+}`
 
 export default function Order({ order }) {
   const {
@@ -6,18 +18,78 @@ export default function Order({ order }) {
     total,
     cliente: { nombre, apellido, telefono, email },
     estado,
+    cliente
   } = order;
 
-  console.log(order);
+  //Mutation to change state of an order
+
+  const [updateOrder] = useMutation(UPDATE_ORDER)
 
   const [orderState, setOrderState] = useState(estado);
+  const [styleClass, setStyleClass] = useState('');
+
 
   const handleStateChange = (e) => {
-    setOrderState(e.target.value);
+    changeOrderState(e.target.value)
   };
 
+  useEffect(() => {
+    if (orderState) {
+      orderClass()
+    }
+  }, [orderState])
+
+
+  
+
+  //Function that modifies the color of the order depending on its state
+
+  const orderClass = () => {
+    if (orderState === 'PENDING') {
+      setStyleClass('border-yellow-500')
+    }
+    else if (orderState === 'COMPLETED') {
+      setStyleClass('border-green-500')
+    }
+    else {
+      setStyleClass('border-red-800')
+
+    }
+  }
+
+  const changeOrderState = async newState => {
+    try {
+      const datos = {
+        'variables': {
+          'id': id,
+          'input': {
+            'estado': newState,
+            'cliente': cliente.id
+          }
+
+        }
+      }
+      console.log('datos que se envian: ',datos);
+      
+      const {data} = await updateOrder({
+        variables: {
+          id,
+          input: {
+            estado: newState,
+            cliente: cliente.id
+          }
+        }
+      });
+
+      setOrderState(data.updateOrder.estado);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
-    <div className="mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg">
+    <div className={`${styleClass} border-t-4 mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg`}>
       <div>
         <p className="font-bold text-gray-800">
           Cliente: {nombre} {apellido}
@@ -29,9 +101,9 @@ export default function Order({ order }) {
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
+              strokeWidth="1.5"
               stroke="currentColor"
-              class="size-4 mr-2"
+              className="size-4 mr-2"
             >
               <path
                 strokeLinecap="round"
@@ -51,7 +123,7 @@ export default function Order({ order }) {
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              class="size-4 mr-2"
+              className="size-4 mr-2"
             >
               <path
                 strokeLinecap="round"

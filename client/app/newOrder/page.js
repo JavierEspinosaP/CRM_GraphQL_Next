@@ -20,6 +20,28 @@ const NEW_ORDER = gql`
   }
 `;
 
+const GET_ORDERS = gql`
+query getOrdersBySeller{
+  getOrdersBySeller{
+    id
+    pedido {
+      cantidad
+      id
+      nombre
+    }
+    cliente {
+      id
+      nombre
+      apellido
+      email
+      telefono
+    }
+    vendedor
+    total
+    estado
+  }
+}`
+
 const NewOrder =() => {
 
 
@@ -32,7 +54,9 @@ const NewOrder =() => {
 
   //Mutation for create new order
 
-  const [newOrder] = useMutation(NEW_ORDER);
+  const [newOrder] = useMutation(NEW_ORDER, {
+    refetchQueries: [{ query: GET_ORDERS }],
+  });
 
   const validateOrder = () => {
     return !products.every((product) => product.quantity > 0) ||

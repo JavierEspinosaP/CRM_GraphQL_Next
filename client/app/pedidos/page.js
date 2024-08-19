@@ -34,8 +34,7 @@ function Pedidos() {
   if (loading) return 'Cargando...'
 
 const {getOrdersBySeller} = data
-  console.log(data);
-  
+
   
   return (<>
     <Header />
