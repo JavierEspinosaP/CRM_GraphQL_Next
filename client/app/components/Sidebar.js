@@ -42,8 +42,8 @@ function Sidebar() {
                 <p className='text-white'>Mejores Vendedores</p>
               </Link>
             </li>
-            <li className={router === '/bestclients' ? 'bg-blue-800 p-1' : 'p-1'}>
-              <Link href='/'>
+            <li className={router === '/bestClients' ? 'bg-blue-800 p-1' : 'p-1'}>
+              <Link href='/bestClients'>
                 <p className='text-white'>Mejores Clientes</p>
               </Link>
             </li>

@@ -138,7 +138,7 @@ const resolvers = {
         {
           $group: {
             _id: "$vendedor",
-            total: { $sum: "total" },
+            total: { $sum: "$total" },
           },
         },
         {
@@ -156,6 +156,8 @@ const resolvers = {
           $sort: { total: -1 },
         },
       ]);
+      console.log('SELLERS: ', sellers);
+      
       return sellers;
     },
     searchProduct: async (_, { texto }) => {

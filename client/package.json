@@ -11,9 +11,12 @@
   "dependencies": {
     "@apollo/client": "^3.8.0-rc.1",
     "@apollo/experimental-nextjs-app-support": "^0.4.1",
+    "@nivo/bar": "^0.87.0",
+    "@nivo/core": "^0.87.0",
     "apollo-link-context": "^1.0.20",
     "autoprefixer": "10.4.14",
     "cookies-next": "^2.1.2",
+    "d3-shape": "^3.2.0",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.7",
     "formik": "^2.4.2",
