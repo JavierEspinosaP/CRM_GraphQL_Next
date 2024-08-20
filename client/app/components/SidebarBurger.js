@@ -17,7 +17,9 @@ function Sidebar() {
       {/* Botón de menú hamburguesa */}
       <button 
         onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 text-white focus:outline-none"
+        className={`fixed top-4 left-4 z-50 focus:outline-none text-2xl p-2 rounded-md ${
+          isOpen ? 'text-white' : 'text-black'
+        } bg-black bg-opacity-20 mr-2`} // Se añade un margen derecho de 10px
       >
         ☰
       </button>
@@ -25,7 +27,7 @@ function Sidebar() {
       {/* Fondo oscuro cuando el sidebar está abierto */}
       {isOpen && 
         <div 
-          className="fixed inset-0 z-20 bg-black opacity-50 transition-opacity duration-300"
+          className="fixed inset-0 z-20 bg-black opacity-50 transition-opacity duration-300 ml-[10px]"
           onClick={toggleSidebar}
         ></div>
       }
@@ -34,7 +36,7 @@ function Sidebar() {
       <div 
         className={`fixed inset-y-0 left-0 z-30 transform transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        } ml-[10px]`} // Se añade un margen izquierdo de 10px
       >
         <aside 
           className='bg-gray-800 min-h-screen p-5 opacity-90'

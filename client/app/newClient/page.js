@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-
 import Header from '../components/Header';
 import { useFormik } from 'formik'
 import { gql, useMutation } from '@apollo/client'
@@ -32,18 +31,11 @@ query getClientsSeller{
 
 function newClient() {
 
-    //Mutation create new client
-
     const [newClient] = useMutation(NEW_CLIENT)
-
-    //Routing
-
     const router = useRouter()
-
 
     const [message, setMessage] = useState(null)
     const [colour, setColour] = useState('bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto')
-
 
     const formik = useFormik({
         initialValues: {
@@ -61,7 +53,6 @@ function newClient() {
             email: Yup.string()
                 .email('El email no es válido')
                 .required('El email es obligatorio'),
-            email: Yup.string().email('El email no es válido').required('El email es obligatorio'),
             company: Yup.string().required('La empresa es obligatoria'),
             phone: Yup.string().matches(/^(\+\d{1,3}[- ]?)?\d{9}$/, 'El teléfono no es válido'),
         }),
@@ -80,7 +71,6 @@ function newClient() {
                             telefono: phone
                         }
                     }
-
                 })
 
                 setColour('bg-green-300 py-2 px-3 w-full my-3 max-w-sm text-center mx-auto')
@@ -109,14 +99,16 @@ function newClient() {
         )
     }
 
-    return (<>
-        <Header />
+    return (
+        <>
+            <Header />
 
-        <section className='min-h-screen flex flex-col justify-center w-screen'>
+            <h1 className="text-2xl text-gray-800 font-light text-center mt-10">Create New Client</h1>
+
             {message && showMessage()}
-            <h1 className='text-center'>Create New Client</h1>
-            <div className='flex justify-center'>
-                <div className=' w-full max-w-sm'>
+
+            <div className="flex justify-center mt-10">
+                <div className="w-full max-w-lg">
                     <form className='bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4'
                         onSubmit={formik.handleSubmit}>
                         <div className='mb-4'>
@@ -128,7 +120,6 @@ function newClient() {
                                 placeholder='John'
                                 value={formik.values.name}
                                 onChange={formik.handleChange}
-                            // onBlur={formik.handleBlur}
                             />
                         </div>
 
@@ -147,7 +138,6 @@ function newClient() {
                                 placeholder='Doe'
                                 value={formik.values.surname}
                                 onChange={formik.handleChange}
-                            // onBlur={formik.handleBlur}
                             />
                         </div>
 
@@ -166,7 +156,6 @@ function newClient() {
                                 placeholder='abc@mail.com'
                                 value={formik.values.email}
                                 onChange={formik.handleChange}
-                            // onBlur={formik.handleBlur}
                             />
                         </div>
 
@@ -216,11 +205,8 @@ function newClient() {
                         />
                     </form>
                 </div>
-
             </div>
-        </section>
-    </>
-
+        </>
     )
 }
 

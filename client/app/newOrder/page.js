@@ -73,26 +73,30 @@ const NewOrder =() => {
     const { id } = client;
 
 
-    //Remove not necessary of products
-    const order = products.map(({__typename, stock, ...product}) => product)
-    console.log(order);
+    // //Remove not necessary of products
+    // const order = products.map(({__typename, stock, ...product}) => product)
+    // console.log(order);
     
+    // Remove unnecessary fields from products and construct the 'pedido' array
+    const order = products.map(({__typename, stock, ...product}) => ({
+      id: product.id,
+      nombre: product.nombre,
+      precio: product.precio,
+      cantidad: product.quantity
+    }));
+
     try {
-      const {data} = await newOrder({
+      const { data } = await newOrder({
         variables: {
           input: {
             cliente: id,
             total,
-            pedido: {
-              id: order[0].id,
-              nombre: order[0].nombre,
-              precio: order[0].precio,
-              cantidad: order[0].quantity
-            }
+            pedido: order // Aquí se pasa el array completo de productos
           }
-
         }
-      })
+      });
+      console.log(data);
+      
 
       //Redirect
 

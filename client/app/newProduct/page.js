@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-
 import Header from '../components/Header';
 import { useFormik } from 'formik'
 import { gql, useMutation, useQuery } from '@apollo/client'
@@ -44,7 +43,6 @@ function newProduct() {
       setDataProducts(data)
     }, [data])
     
-
     //Routing
 
     const router = useRouter()
@@ -127,14 +125,16 @@ function newProduct() {
         )
     }
 
-    return (<>
-        <Header />
+    return (
+        <>
+            <Header />
 
-        <section className='min-h-screen flex flex-col justify-center w-screen'>
+            <h1 className="text-2xl text-gray-800 font-light text-center mt-10">Create New Product</h1>
+
             {message && showMessage()}
-            <h1 className='text-center'>Create New Product</h1>
-            <div className='flex justify-center'>
-                <div className=' w-full max-w-sm'>
+
+            <div className="flex justify-center mt-10">
+                <div className="w-full max-w-lg">
                     <form className='bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4'
                         onSubmit={formik.handleSubmit}>
                         <div className='mb-4'>
@@ -146,7 +146,6 @@ function newProduct() {
                                 placeholder='Introduce nombre de producto'
                                 value={formik.values.name}
                                 onChange={formik.handleChange}
-                            // onBlur={formik.handleBlur}
                             />
                         </div>
 
@@ -165,7 +164,6 @@ function newProduct() {
                                 placeholder='Introduce precio en €'
                                 value={formik.values.price}
                                 onChange={formik.handleChange}
-                            // onBlur={formik.handleBlur}
                             />
                         </div>
 
@@ -199,11 +197,8 @@ function newProduct() {
                         />
                     </form>
                 </div>
-
             </div>
-        </section>
-    </>
-
+        </>
     )
 }
 
