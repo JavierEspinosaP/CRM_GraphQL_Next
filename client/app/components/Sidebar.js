@@ -34,6 +34,20 @@ function Sidebar() {
               </Link>
             </li>
           </nav>
+
+          <h2 className='text-white font-black mt-4'>Otras opciones</h2>
+          <nav className='mt-5 list-none'>
+          <li className={router === '/bestSellers' ? 'bg-blue-800 p-1' : 'p-1'}>
+              <Link href='/bestSellers'>
+                <p className='text-white'>Mejores Vendedores</p>
+              </Link>
+            </li>
+            <li className={router === '/bestclients' ? 'bg-blue-800 p-1' : 'p-1'}>
+              <Link href='/'>
+                <p className='text-white'>Mejores Clientes</p>
+              </Link>
+            </li>
+</nav>
         </aside>}
 
     </>
