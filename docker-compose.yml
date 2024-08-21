@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   server:
@@ -8,10 +8,9 @@ services:
       - "4000:4000"
     env_file:
       - .env
-    depends_on:
-      - mongo
-    networks:
-      - crm-network
+    environment:
+      CLIENT_URL: http://client:3000
+      DATABASE_URL: mongodb://host.docker.internal:27017/CRMGraphQL  # Se conecta a la instancia existente en el host
 
   client:
     build:
@@ -19,20 +18,7 @@ services:
     image: crm/client:v1
     ports:
       - "3000:3000"
-    networks:
-      - crm-network
+    environment:
+      API_URL: http://server:4000
 
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    networks:
-      - crm-network
-    volumes:
-      - mongo-data:/data/db
-
-networks:
-  crm-network:
-
-volumes:
-  mongo-data:
+  # No necesitamos un servicio `db` aquí si estamos usando una instancia externa

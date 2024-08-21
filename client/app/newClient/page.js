@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from '../components/Header';
 import { useFormik } from 'formik'
 import { gql, useMutation } from '@apollo/client'

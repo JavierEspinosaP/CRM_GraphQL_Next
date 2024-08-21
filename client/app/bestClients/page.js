@@ -24,27 +24,23 @@ const BEST_CLIENTS = gql`
 `;
 
 const BestClients = () => {
+  const router = useRouter();
   const cookie = hasCookie("session-token");
 
-  const router = useRouter();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (!cookie) {
-      return router.push("/login");
-    }
-  }, []);
-
-  if (!cookie) {
-    // Evita el renderizado hasta que se complete el redireccionamiento
-    return null;
-  }
-  const { data, loading, error, startPolling, stopPolling } =
-    useQuery(BEST_CLIENTS);
-
+  // Coloca los hooks en el nivel superior para asegurar que se llamen incondicionalmente
+  const { data, loading, error, startPolling, stopPolling } = useQuery(BEST_CLIENTS);
   const [marginRight, setMarginRight] = useState(30);
 
   useEffect(() => {
-    startPolling(1000);
+    if (!cookie) {
+      router.push("/login");
+    }
+  }, [cookie, router]); // Incluye las dependencias faltantes
+
+  useEffect(() => {
+    if (cookie) {
+      startPolling(1000);
+    }
 
     // Ajuste del margen derecho en función del ancho de la pantalla
     const handleResize = () => {
@@ -63,7 +59,12 @@ const BestClients = () => {
       stopPolling();
       window.removeEventListener("resize", handleResize);
     };
-  }, [startPolling, stopPolling]);
+  }, [cookie, startPolling, stopPolling]); // Asegúrate de incluir todas las dependencias necesarias
+
+  if (!cookie) {
+    // Evita el renderizado hasta que se complete el redireccionamiento
+    return null;
+  }
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error al cargar los datos.</p>;
@@ -146,7 +147,7 @@ const BestClients = () => {
                 legend: {
                   text: {
                     fontSize: 16,
-                    fontWeight: "bold", // Asegura que las leyendas estén en negrita
+                    fontWeight: "bold",
                   },
                 },
               },

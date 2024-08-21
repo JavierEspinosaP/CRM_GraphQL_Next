@@ -10,6 +10,9 @@ COPY package*.json ./
 # Instalamos las dependencias
 RUN npm install
 
+# Deshabilitar eslint para la creacion de la imagen
+ENV ESLINT_NO_DEV_ERRORS=true
+
 # Copiamos el resto del código de la aplicación
 COPY . .
 
