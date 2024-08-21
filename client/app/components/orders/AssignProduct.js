@@ -27,7 +27,7 @@ const AssignProduct = () => {
   //Query database
 
   const { data, loading, error } = useQuery(OBTENER_PRODUCTOS);
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     addProduct(products);
   }, [products]);

@@ -5,7 +5,7 @@ import {
     REFRESH_TOTAL
 } from '../../types';
 
-
+// eslint-disable-next-line import/no-anonymous-default-export
 export default (state, action) => {
     switch(action.type) {
         case SELECT_CLIENT:
@@ -19,6 +19,7 @@ export default (state, action) => {
                     products: action.payload
                 }
             case PRODUCT_QUANTITY:
+                console.log('PRODUCTS EN CASE PRODUCT QUANTITY: ', state.products.map(product => product.id === action.payload.id ? product = action.payload : product));
                 return {
                     ...state,
                     products: state.products.map(product => product.id === action.payload.id ? product = action.payload : product)

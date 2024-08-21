@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import dynamic from "next/dynamic";
 import { gql, useQuery } from "@apollo/client";
+import { hasCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 
 const ResponsiveBar = dynamic(
   () => import("@nivo/bar").then((m) => m.ResponsiveBar),
@@ -22,6 +24,20 @@ const BEST_CLIENTS = gql`
 `;
 
 const BestClients = () => {
+  const cookie = hasCookie("session-token");
+
+  const router = useRouter();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!cookie) {
+      return router.push("/login");
+    }
+  }, []);
+
+  if (!cookie) {
+    // Evita el renderizado hasta que se complete el redireccionamiento
+    return null;
+  }
   const { data, loading, error, startPolling, stopPolling } =
     useQuery(BEST_CLIENTS);
 
@@ -41,11 +57,11 @@ const BestClients = () => {
 
     // Llamar inmediatamente y también agregar el evento de escucha
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       stopPolling();
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, [startPolling, stopPolling]);
 
@@ -68,7 +84,9 @@ const BestClients = () => {
   return (
     <>
       <Header />
-      <h1 className="text-2xl text-gray-800 font-light text-center">Mejores Clientes</h1>
+      <h1 className="text-2xl text-gray-800 font-light text-center">
+        Mejores Clientes
+      </h1>
       <div className="flex justify-center mt-8">
         <div style={chartStyle} className="bg-white p-4 rounded-lg shadow-lg">
           <ResponsiveBar
@@ -124,16 +142,15 @@ const BestClients = () => {
               e.id + ": " + e.formattedValue + " compras por " + e.indexValue
             }
             theme={{
-                axis: {
-                  legend: {
-                    text: {
-                      fontSize: 16,
-                      fontWeight: "bold", // Asegura que las leyendas estén en negrita
-                    },
+              axis: {
+                legend: {
+                  text: {
+                    fontSize: 16,
+                    fontWeight: "bold", // Asegura que las leyendas estén en negrita
                   },
                 },
-              }}
-              
+              },
+            }}
           />
         </div>
       </div>

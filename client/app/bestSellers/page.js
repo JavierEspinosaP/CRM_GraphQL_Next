@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import dynamic from "next/dynamic";
 import { gql, useQuery } from "@apollo/client";
+import { hasCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 
 const ResponsiveBar = dynamic(
   () => import("@nivo/bar").then((m) => m.ResponsiveBar),
@@ -22,6 +24,20 @@ const BEST_SELLERS = gql`
 `;
 
 const BestSellers = () => {
+  const cookie = hasCookie("session-token");
+
+  const router = useRouter();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!cookie) {
+      return router.push("/login");
+    }
+  }, []);
+
+  if (!cookie) {
+    // Evita el renderizado hasta que se complete el redireccionamiento
+    return null;
+  }
   const { data, loading, error, startPolling, stopPolling } =
     useQuery(BEST_SELLERS);
 
@@ -55,8 +71,8 @@ const BestSellers = () => {
         Mejores Vendedores
       </h1>
       <div className="flex justify-center">
-      <div style={chartStyle} className="bg-white p-4 rounded-lg shadow-lg">
-      <ResponsiveBar
+        <div style={chartStyle} className="bg-white p-4 rounded-lg shadow-lg">
+          <ResponsiveBar
             data={chartData}
             keys={["value"]}
             indexBy="vendedor"

@@ -5,7 +5,9 @@ import Header from '../components/Header';
 import { useFormik } from 'formik'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import * as Yup from 'yup'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
+import { hasCookie } from "cookies-next";
+
 
 const NEW_PRODUCT = gql`
 mutation newProduct ($input: ProductInput) {
@@ -27,7 +29,21 @@ query getProducts{
   }
 }`
 
-function newProduct() {
+function NewProduct() {
+    const cookie = hasCookie("session-token");
+
+    const router = useRouter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+      if (!cookie) {
+        return router.push("/login");
+      }
+    }, []);
+  
+    if (!cookie) {
+      // Evita el renderizado hasta que se complete el redireccionamiento
+      return null;
+    }
 
     const [dataProducts, setDataProducts] = useState([])
 
@@ -42,11 +58,6 @@ function newProduct() {
     useEffect(() => {
       setDataProducts(data)
     }, [data])
-    
-    //Routing
-
-    const router = useRouter()
-
 
     const [message, setMessage] = useState(null)
     const [colour, setColour] = useState('bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto')
@@ -202,4 +213,4 @@ function newProduct() {
     )
 }
 
-export default newProduct
+export default NewProduct

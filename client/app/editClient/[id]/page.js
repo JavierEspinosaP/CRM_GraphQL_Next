@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { useRouter, useParams } from "next/navigation";
 import { Formik } from "formik";
 import Swal from "sweetalert2";
+import { hasCookie } from "cookies-next";
 
 const UPDATE_CLIENT = gql`
   mutation updateClient($id: ID!, $input: ClientInput) {
@@ -30,7 +31,21 @@ const GET_CLIENT = gql`
   }
 `;
 
-function editClient() {
+function EditClient() {
+  const cookie = hasCookie("session-token");
+
+  const router = useRouter();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!cookie) {
+      return router.push("/login");
+    }
+  }, []);
+
+  if (!cookie) {
+    // Evita el renderizado hasta que se complete el redireccionamiento
+    return null;
+  }
   const clientID = useParams();
 
   const { data, loading, error } = useQuery(GET_CLIENT, {
@@ -61,10 +76,6 @@ function editClient() {
       "El teléfono no es válido"
     ),
   });
-
-  //Routing
-
-  const router = useRouter();
 
   if (loading) {
     return "Cargando...";
@@ -260,4 +271,4 @@ function editClient() {
   );
 }
 
-export default editClient;
+export default EditClient;

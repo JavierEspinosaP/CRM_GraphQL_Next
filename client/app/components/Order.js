@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import Swal from "sweetalert2";
 
 const UPDATE_ORDER = gql`
@@ -49,6 +49,7 @@ export default function Order({ order }) {
     total,
     cliente: { nombre, apellido, telefono, email },
     estado,
+    pedido,
     cliente,
   } = order;
 
@@ -66,13 +67,17 @@ export default function Order({ order }) {
     changeOrderState(e.target.value);
   };
 
-  useEffect(() => {
-    if (orderState) {
-      orderClass();
-    }
-  }, [orderState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+      if (orderState) {
+        orderClass();
+      }
+    }, [orderState]);
+
 
   //Function that modifies the color of the order depending on its state
+
+
 
   const orderClass = () => {
     if (orderState === "PENDING") {
@@ -147,7 +152,6 @@ export default function Order({ order }) {
         <p className="font-bold text-gray-800">
           Cliente: {nombre} {apellido}
         </p>
-
         {email && (
           <p className="flex items-center my-2">
             <svg
@@ -201,11 +205,12 @@ export default function Order({ order }) {
       </div>
       <div>
         <h2 className="text-gray-800 font-bold mt-2"> Resumen del pedido</h2>
-        {order.pedido.map((product) => (
+        {pedido.map((product) => (
           <div key={product.id} className="mt-4">
             <p className="text-sm text-gray-600">Producto: {product.nombre}</p>
             <p className="text-sm text-gray-600">
-              Cantidad: {product.cantidad}
+              Cantidad:{" "}
+              {product.cantidad}
             </p>
           </div>
         ))}

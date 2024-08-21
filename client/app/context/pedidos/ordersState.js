@@ -44,6 +44,9 @@ const OrderState = ({children}) => {
             //Get of second array, a copy to assign of the first one
             newState = selectedProducts.map(product => {
                 const newObj = state.products.find(productState => productState.id === product.id)
+                console.log('NEWOBJ: ',newObj);
+                console.log('PRODUCT: ',product);
+                
                 return {
                     ...product,
                     ...newObj
@@ -64,6 +67,9 @@ const OrderState = ({children}) => {
     //Modify quantity
 
     const productsQuantity = newProduct => {
+        console.log('PRODUCTSQUANTITY (NEWPRODUCT): ',newProduct);
+        
+        
         dispatch({
             type: PRODUCT_QUANTITY,
             payload: newProduct

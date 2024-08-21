@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  server:
+    build: .
+    image: crm/server:v1
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    networks:
+      - crm-network
+
+  client:
+    build:
+      context: ./client
+    image: crm/client:v1
+    ports:
+      - "3000:3000"
+    networks:
+      - crm-network
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - crm-network
+    volumes:
+      - mongo-data:/data/db
+
+networks:
+  crm-network:
+
+volumes:
+  mongo-data:

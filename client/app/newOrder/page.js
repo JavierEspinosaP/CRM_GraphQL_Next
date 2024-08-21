@@ -6,7 +6,8 @@ import OrderSummary from "@/app/components/orders/OrderSummary";
 import Total from "@/app/components/orders/Total";
 import { gql, useMutation } from "@apollo/client";
 import {useRouter} from 'next/navigation';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { hasCookie } from "cookies-next";
 
 //Order context
 
@@ -43,6 +44,20 @@ query getOrdersBySeller{
 }`
 
 const NewOrder =() => {
+  const cookie = hasCookie("session-token");
+
+  const router = useRouter();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!cookie) {
+      return router.push("/login");
+    }
+  }, []);
+
+  if (!cookie) {
+    // Evita el renderizado hasta que se complete el redireccionamiento
+    return null;
+  }
 
 
   const [message, setMessage] = useState(null)
@@ -66,8 +81,6 @@ const NewOrder =() => {
       : " ";
   };
 
-  const router = useRouter();
-
   const createNewOrder = async () => {
 
     const { id } = client;
@@ -78,6 +91,8 @@ const NewOrder =() => {
     // console.log(order);
     
     // Remove unnecessary fields from products and construct the 'pedido' array
+    console.log('CANTIDADES DEL PEDIDO: ', products);
+    
     const order = products.map(({__typename, stock, ...product}) => ({
       id: product.id,
       nombre: product.nombre,

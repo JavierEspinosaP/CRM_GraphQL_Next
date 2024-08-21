@@ -85,9 +85,11 @@ const resolvers = {
         const orders = await Order.find({ vendedor: ctx.usuario.id }).populate(
           "cliente"
         );
+       console.log('PEDIDOS QUE RETORNA GETORDERSBYSELLER: ', orders.map(pedido => pedido.pedido));
+       
         return orders;
       } catch (error) {
-        E;
+      
         console.log(error);
       }
     },

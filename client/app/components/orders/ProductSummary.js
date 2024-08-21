@@ -7,8 +7,10 @@ const ProductSummary = ({ product }) => {
   const orderContext = useContext(OrderContext);
   const { productsQuantity, refreshTotal } = orderContext;
 
-  const [quantity, setQuantity] = useState(0)
+  
 
+  const [quantity, setQuantity] = useState(0)
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     refreshQuantity()
     refreshTotal()
@@ -16,6 +18,7 @@ const ProductSummary = ({ product }) => {
 
   const refreshQuantity = () => {
     const newProduct = {...product, quantity: Number(quantity)}
+    console.log('Updated Product:', newProduct); // Debugging
     productsQuantity(newProduct);
     
   }
