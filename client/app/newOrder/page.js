@@ -8,7 +8,7 @@ import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { hasCookie } from "cookies-next";
-import Header from "./components/Header";
+import Header from "../components/Header";
 
 //Order context
 
