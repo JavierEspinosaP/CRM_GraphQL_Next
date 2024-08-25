@@ -85,9 +85,10 @@ function Login() {
 
   return (
     <section className="min-h-screen flex items-center justify-center">
-      {message && showMessage()}
       <div className="w-full max-w-sm px-4 sm:px-0 mx-auto">
         <h1 className="text-center mb-4">Login</h1>
+        {message && showMessage()}
+
         <form
           className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
           onSubmit={formik.handleSubmit}

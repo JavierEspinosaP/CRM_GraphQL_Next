@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Header from "../../components/Header";
 import { gql, useQuery, useMutation } from "@apollo/client";
@@ -115,156 +115,156 @@ function EditClient() {
 
   return (
     <>
-      <Header />
+            <Header />
+      <section className="min-h-screen flex items-center justify-center">
 
-      <section className="min-h-screen flex flex-col justify-center w-screen">
-        <h1 className="text-center">Edit Client</h1>
-        <div className="flex justify-center">
-          <div className=" w-full max-w-sm">
-            <Formik
-              validationSchema={validationSchema}
-              enableReinitialize
-              initialValues={getClient}
-              onSubmit={(values) => {
-                updateClientInfo(values);
-              }}
-            >
-              {(props) => {
-                return (
-                  <form
-                    className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
-                    onSubmit={props.handleSubmit}
-                  >
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="name"
-                      >
-                        Nombre
-                      </label>
-                      <input
-                        name="nombre"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
-                        id="name"
-                        type="text"
-                        placeholder="John"
-                        value={props.values.nombre}
-                        onChange={props.handleChange}
-                        // onBlur={props.handleBlur}
-                      />
-                    </div>
+        <div className="w-full max-w-sm px-4 sm:px-0 mx-auto">
+          <h1 className="text-center mb-4">Edit Client</h1>
 
-                    {props.touched.nombre && props.errors.nombre ? (
-                      <div className="my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2">
-                        <p>{props.errors.nombre}</p>
-                      </div>
-                    ) : null}
-
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="surname"
-                      >
-                        Apellido
-                      </label>
-                      <input
-                        name="apellido"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
-                        id="surname"
-                        type="text"
-                        placeholder="Doe"
-                        value={props.values.apellido}
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                      />
-                    </div>
-
-                    {props.touched.apellido && props.errors.apellido ? (
-                      <div className="my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2">
-                        <p>{props.errors.apellido}</p>
-                      </div>
-                    ) : null}
-
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="email"
-                      >
-                        Email
-                      </label>
-                      <input
-                        name="email"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
-                        id="email"
-                        type="email"
-                        placeholder="abc@mail.com"
-                        value={props.values.email}
-                        onChange={props.handleChange}
-                        // onBlur={formik.handleBlur}
-                      />
-                    </div>
-
-                    {props.touched.email && props.errors.email ? (
-                      <div className="my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2">
-                        <p>{props.errors.email}</p>
-                      </div>
-                    ) : null}
-
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="company"
-                      >
-                        Empresa
-                      </label>
-                      <input
-                        name="empresa"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
-                        id="company"
-                        type="text"
-                        placeholder="Company Name"
-                        value={props.values.empresa}
-                        onChange={props.handleChange}
-                      />
-                    </div>
-                    {props.touched.empresa && props.errors.empresa ? (
-                      <div className="my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2">
-                        <p>{props.errors.company}</p>
-                      </div>
-                    ) : null}
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="phone"
-                      >
-                        Teléfono
-                      </label>
-                      <input
-                        name="telefono"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
-                        id="phone"
-                        type="tel"
-                        placeholder="1234567890"
-                        value={props.values.telefono}
-                        onChange={props.handleChange}
-                      />
-                    </div>
-                    {props.touched.phone && props.errors.phone ? (
-                      <div className="my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2">
-                        <p>{props.errors.phone}</p>
-                      </div>
-                    ) : null}
-
+          <Formik
+            validationSchema={validationSchema}
+            enableReinitialize
+            initialValues={getClient}
+            onSubmit={(values) => {
+              updateClientInfo(values);
+            }}
+          >
+            {(props) => {
+              return (
+                <form
+                  className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
+                  onSubmit={props.handleSubmit}
+                >
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="nombre"
+                    >
+                      Nombre
+                    </label>
                     <input
-                      type="submit"
-                      className="bg-gray-700 w-full mt-5 p-2 text-white uppercase hover:bg-gray-900"
-                      value="create"
+                      name="nombre"
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
+                      id="nombre"
+                      type="text"
+                      placeholder="John"
+                      value={props.values.nombre}
+                      onChange={props.handleChange}
                     />
-                  </form>
-                );
-              }}
-            </Formik>
-          </div>
+                  </div>
+
+                  {props.touched.nombre && props.errors.nombre ? (
+                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                      <p>{props.errors.nombre}</p>
+                    </div>
+                  ) : null}
+
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="apellido"
+                    >
+                      Apellido
+                    </label>
+                    <input
+                      name="apellido"
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
+                      id="apellido"
+                      type="text"
+                      placeholder="Doe"
+                      value={props.values.apellido}
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                    />
+                  </div>
+
+                  {props.touched.apellido && props.errors.apellido ? (
+                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                      <p>{props.errors.apellido}</p>
+                    </div>
+                  ) : null}
+
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="email"
+                    >
+                      Email
+                    </label>
+                    <input
+                      name="email"
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
+                      id="email"
+                      type="email"
+                      placeholder="abc@mail.com"
+                      value={props.values.email}
+                      onChange={props.handleChange}
+                    />
+                  </div>
+
+                  {props.touched.email && props.errors.email ? (
+                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                      <p>{props.errors.email}</p>
+                    </div>
+                  ) : null}
+
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="empresa"
+                    >
+                      Empresa
+                    </label>
+                    <input
+                      name="empresa"
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
+                      id="empresa"
+                      type="text"
+                      placeholder="Company Name"
+                      value={props.values.empresa}
+                      onChange={props.handleChange}
+                    />
+                  </div>
+
+                  {props.touched.empresa && props.errors.empresa ? (
+                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                      <p>{props.errors.empresa}</p>
+                    </div>
+                  ) : null}
+
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="telefono"
+                    >
+                      Teléfono
+                    </label>
+                    <input
+                      name="telefono"
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
+                      id="telefono"
+                      type="tel"
+                      placeholder="1234567890"
+                      value={props.values.telefono}
+                      onChange={props.handleChange}
+                    />
+                  </div>
+
+                  {props.touched.telefono && props.errors.telefono ? (
+                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                      <p>{props.errors.telefono}</p>
+                    </div>
+                  ) : null}
+
+                  <input
+                    type="submit"
+                    className="bg-gray-700 w-full mt-5 p-2 text-white uppercase hover:bg-gray-900"
+                    value="Save"
+                  />
+                </form>
+              );
+            }}
+          </Formik>
         </div>
       </section>
     </>

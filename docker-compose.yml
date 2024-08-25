@@ -3,22 +3,33 @@ version: '3.8'
 services:
   server:
     build: .
-    image: crm/server:v1
+    image: next_graphql_crm:v1 
     ports:
       - "4000:4000"
     env_file:
       - .env
+    depends_on:
+      - db
     environment:
       CLIENT_URL: http://client:3000
-      DATABASE_URL: mongodb://host.docker.internal:27017/CRMGraphQL  # Se conecta a la instancia existente en el host
+      DATABASE_URL: mongodb://db:27017/CRMGraphQL 
 
   client:
     build:
       context: ./client
-    image: crm/client:v1
+    image: next_graphql_crm_client:v1 
     ports:
       - "3000:3000"
     environment:
       API_URL: http://server:4000
 
-  # No necesitamos un servicio `db` aquí si estamos usando una instancia externa
+  db:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

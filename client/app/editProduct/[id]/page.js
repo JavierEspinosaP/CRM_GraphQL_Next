@@ -1,4 +1,5 @@
 "use client";
+import {useEffect} from 'react';
 import Header from "../../components/Header";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import * as Yup from "yup";
@@ -111,115 +112,115 @@ function EditProduct() {
 
   return (
     <>
-      <Header />
-
-      <section className="min-h-screen flex flex-col justify-center w-screen">
-        <h1 className="text-center">Edit Product</h1>
-        <div className="flex justify-center">
-          <div className=" w-full max-w-sm">
-            <Formik
-              validationSchema={validationSchema}
-              enableReinitialize
-              initialValues={getProduct}
-              onSubmit={(values) => {
-                updateProductInfo(values);
-              }}
-            >
-              {(props) => {
-                return (
-                  <form
-                    className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
-                    onSubmit={props.handleSubmit}
+    <Header />
+        <section className="min-h-screen flex items-center justify-center">
+      <div className="w-full max-w-sm px-4 sm:px-0 mx-auto">
+        <h1 className="text-center mb-4">Edit Product</h1>
+  
+        <Formik
+          validationSchema={validationSchema}
+          enableReinitialize
+          initialValues={getProduct}
+          onSubmit={(values) => {
+            updateProductInfo(values);
+          }}
+        >
+          {(props) => {
+            return (
+              <form
+                className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
+                onSubmit={props.handleSubmit}
+              >
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="name"
                   >
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="name"
-                      >
-                        Nombre
-                      </label>
-                      <input
-                        name="nombre"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
-                        id="name"
-                        type="text"
-                        placeholder="John"
-                        value={props.values.nombre}
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                      />
-                    </div>
-
-                    {props.touched.nombre && props.errors.nombre ? (
-                      <div className="my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2">
-                        <p>{props.errors.nombre}</p>
-                      </div>
-                    ) : null}
-
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="surname"
-                      >
-                        Precio
-                      </label>
-                      <input
-                        name="precio"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
-                        id="price"
-                        type="text"
-                        placeholder="Introduce el precio con dos decimales"
-                        value={props.values.precio}
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                      />
-                    </div>
-
-                    {props.touched.precio && props.errors.precio ? (
-                      <div className="my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2">
-                        <p>{props.errors.precio}</p>
-                      </div>
-                    ) : null}
-
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="email"
-                      >
-                        Stock
-                      </label>
-                      <input
-                        name="stock"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
-                        id="stock"
-                        type="stock"
-                        placeholder="abc@mail.com"
-                        value={props.values.stock}
-                        onChange={props.handleChange}
-                        // onBlur={formik.handleBlur}
-                      />
-                    </div>
-
-                    {props.touched.stock && props.errors.stock ? (
-                      <div className="my-2 bg-red-100 border-l-4 border-red-500 test-red-700 p-2">
-                        <p>{props.errors.stock}</p>
-                      </div>
-                    ) : null}
-
-                    <input
-                      type="submit"
-                      className="bg-gray-700 w-full mt-5 p-2 text-white uppercase hover:bg-gray-900"
-                      value="create"
-                    />
-                  </form>
-                );
-              }}
-            </Formik>
-          </div>
-        </div>
-      </section>
+                    Nombre
+                  </label>
+                  <input
+                    name="nombre"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
+                    id="name"
+                    type="text"
+                    placeholder="John"
+                    value={props.values.nombre}
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                  />
+                </div>
+  
+                {props.touched.nombre && props.errors.nombre ? (
+                  <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                    <p>{props.errors.nombre}</p>
+                  </div>
+                ) : null}
+  
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="precio"
+                  >
+                    Precio
+                  </label>
+                  <input
+                    name="precio"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
+                    id="price"
+                    type="text"
+                    placeholder="Introduce el precio con dos decimales"
+                    value={props.values.precio}
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                  />
+                </div>
+  
+                {props.touched.precio && props.errors.precio ? (
+                  <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                    <p>{props.errors.precio}</p>
+                  </div>
+                ) : null}
+  
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="stock"
+                  >
+                    Stock
+                  </label>
+                  <input
+                    name="stock"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
+                    id="stock"
+                    type="number"
+                    placeholder="Cantidad en stock"
+                    value={props.values.stock}
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                  />
+                </div>
+  
+                {props.touched.stock && props.errors.stock ? (
+                  <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                    <p>{props.errors.stock}</p>
+                  </div>
+                ) : null}
+  
+                <input
+                  type="submit"
+                  className="bg-gray-700 w-full mt-5 p-2 text-white uppercase hover:bg-gray-900"
+                  value="Save"
+                />
+              </form>
+            );
+          }}
+        </Formik>
+      </div>
+    </section>
     </>
+
   );
+  
 }
 
 export default EditProduct;
