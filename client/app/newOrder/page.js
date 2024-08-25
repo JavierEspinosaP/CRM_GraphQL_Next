@@ -5,9 +5,10 @@ import AssignProduct from "../components/orders/AssignProduct";
 import OrderSummary from "@/app/components/orders/OrderSummary";
 import Total from "@/app/components/orders/Total";
 import { gql, useMutation } from "@apollo/client";
-import {useRouter} from 'next/navigation';
-import Swal from 'sweetalert2';
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 import { hasCookie } from "cookies-next";
+import Header from "./components/Header";
 
 //Order context
 
@@ -22,28 +23,29 @@ const NEW_ORDER = gql`
 `;
 
 const GET_ORDERS = gql`
-query getOrdersBySeller{
-  getOrdersBySeller{
-    id
-    pedido {
-      cantidad
+  query getOrdersBySeller {
+    getOrdersBySeller {
       id
-      nombre
+      pedido {
+        cantidad
+        id
+        nombre
+      }
+      cliente {
+        id
+        nombre
+        apellido
+        email
+        telefono
+      }
+      vendedor
+      total
+      estado
     }
-    cliente {
-      id
-      nombre
-      apellido
-      email
-      telefono
-    }
-    vendedor
-    total
-    estado
   }
-}`
+`;
 
-const NewOrder =() => {
+const NewOrder = () => {
   const cookie = hasCookie("session-token");
 
   const router = useRouter();
@@ -59,13 +61,11 @@ const NewOrder =() => {
     return null;
   }
 
-
-  const [message, setMessage] = useState(null)
+  const [message, setMessage] = useState(null);
   // Use Context and extract its values
 
   const orderContext = useContext(OrderContext);
   const { client, products, total } = orderContext;
-
 
   //Mutation for create new order
 
@@ -82,22 +82,20 @@ const NewOrder =() => {
   };
 
   const createNewOrder = async () => {
-
     const { id } = client;
-
 
     // //Remove not necessary of products
     // const order = products.map(({__typename, stock, ...product}) => product)
     // console.log(order);
-    
+
     // Remove unnecessary fields from products and construct the 'pedido' array
-    console.log('CANTIDADES DEL PEDIDO: ', products);
-    
-    const order = products.map(({__typename, stock, ...product}) => ({
+    console.log("CANTIDADES DEL PEDIDO: ", products);
+
+    const order = products.map(({ __typename, stock, ...product }) => ({
       id: product.id,
       nombre: product.nombre,
       precio: product.precio,
-      cantidad: product.quantity
+      cantidad: product.quantity,
     }));
 
     try {
@@ -106,27 +104,22 @@ const NewOrder =() => {
           input: {
             cliente: id,
             total,
-            pedido: order // Aquí se pasa el array completo de productos
-          }
-        }
+            pedido: order, // Aquí se pasa el array completo de productos
+          },
+        },
       });
       console.log(data);
-      
 
       //Redirect
 
-      router.push('/pedidos')
+      router.push("/pedidos");
       //Show alert
 
-      Swal.fire(
-        'Correcto',
-        'El pedido se registró correctamente',
-        'success'
-      )
+      Swal.fire("Correcto", "El pedido se registró correctamente", "success");
     } catch (error) {
-      setMessage(error.message.replace('GraphQL error: ', ''))
+      setMessage(error.message.replace("GraphQL error: ", ""));
       setTimeout(() => {
-        setMessage(null)
+        setMessage(null);
       }, 3000);
     }
   };
@@ -136,11 +129,13 @@ const NewOrder =() => {
       <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto">
         <p>{message}</p>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <>
+      <Header />
+
       <h1 className="text-2xl text-gray-800 font-light">Create new order</h1>
 
       {message && showMessage()}
@@ -163,6 +158,6 @@ const NewOrder =() => {
       </div>
     </>
   );
-}
+};
 
 export default NewOrder;
