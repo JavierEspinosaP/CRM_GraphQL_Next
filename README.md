@@ -58,7 +58,7 @@ MongoDB serves as the database service, storing all data related to clients, pro
 
 - User Registration: New users can register by providing their name, surname, email, and password.
 - Login: Registered users can log in using their email and password. Upon successful login, a JWT is issued and stored in a cookie for session management.
-- Protected Routes: Access to certain routes (e.g., /clients, /products, /orders) is restricted to authenticated users only.
+- Protected Routes: Access to certain routes (e.g., /, /productos, /pedidos) is restricted to authenticated users only.
 
 ### Client Management
 
@@ -91,9 +91,9 @@ The application is structured with the following routes:
 
 - /bestClients: View top clients.
 - /bestSellers: View top-performing sales representatives.
-- /clients: Manage clients (list, add, edit, delete).
-- /products: Manage products (list, add, edit, delete).
-- /orders: Manage orders (list, create, update, delete).
+- /: Manage clients (list, add, edit, delete).
+- /productos: Manage products (list, add, edit, delete).
+- /pedidos: Manage orders (list, create, update, delete).
 - /login: User login.
 - /signup: User registration.
 - /newClient: Add a new client.
@@ -177,7 +177,7 @@ This command will build the Docker images for the client and server, and then st
 
 - The client application will be available at http://localhost:3000
 
-- The GraphQL API will be available at http://localhost:4000/graphql
+- The GraphQL API will be available at http://localhost:4000
 
 - MongoDB will be running on localhost:27017, accessible with any MongoDB client.
 
