@@ -6,6 +6,7 @@ require('dotenv').config({path: '.env'})
 const dbConnection = async () => {
     try {
         
+        
         // Attempt to connect to the MongoDB database using the connection string from environment variables
         await mongoose.connect(process.env.DB_MONGO, {
             useNewUrlParser: true, // Use the new URL parser to avoid deprecation warnings
