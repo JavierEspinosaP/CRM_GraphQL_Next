@@ -13,8 +13,9 @@ services:
     environment:
       CLIENT_URL: http://client:3000
       DATABASE_URL: mongodb://db:27017/CRMGraphQL 
+      DB_MONGO: mongodb://db:27017/CRMGraphQL
     volumes:
-      - /mnt/volume_fra1_01/crm-next/server:/app
+      - .:/app 
 
   client:
     build:
@@ -31,7 +32,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - /mnt/volume_fra1_01/crm-next/db:/data/db
+      - ./db:/data/db 
 
 volumes:
   mongo-data:
