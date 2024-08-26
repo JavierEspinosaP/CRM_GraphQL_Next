@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Header from "../components/Header";
 import Order from "../components/Order";
@@ -7,6 +7,7 @@ import { gql, useQuery } from "@apollo/client";
 import { hasCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 
+// GraphQL query to get orders by the seller
 const GET_ORDERS_BY_SELLER = gql`
   query GetOrdersBySeller {
     getOrdersBySeller {
@@ -32,24 +33,53 @@ const GET_ORDERS_BY_SELLER = gql`
 
 function Pedidos() {
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
   const cookie = hasCookie("session-token");
 
+  // Set isClient to true when the component mounts
   useEffect(() => {
-    if (!cookie) {
+    setIsClient(true);
+  }, []);
+
+  // Redirect to login if the cookie is not present
+  useEffect(() => {
+    if (isClient && !cookie) {
       router.push("/login");
     }
-  }, [cookie, router]);
+  }, [cookie, router, isClient]);
 
-  if (!cookie) {
-    // Evita el renderizado hasta que se complete el redireccionamiento
-    return null;
-  }
-
-  const { data, loading, error } = useQuery(GET_ORDERS_BY_SELLER, {
+  // Use the GET_ORDERS_BY_SELLER query to fetch orders
+  const { data, loading, error, refetch } = useQuery(GET_ORDERS_BY_SELLER, {
     fetchPolicy: "no-cache",
+    skip: !isClient || !cookie, // Skip the query if not client-side or no cookie
   });
 
-  if (loading) return "Cargando...";
+  // Refetch orders when an order is deleted
+  const handleOrderDeleted = () => {
+    refetch();
+  };
+
+  if (!isClient) {
+    return null; // Avoid rendering until client-side is confirmed
+  }
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <p>Cargando...</p>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Header />
+        <p>Error al cargar los pedidos.</p>
+      </>
+    );
+  }
 
   const { getOrdersBySeller } = data;
 
@@ -66,7 +96,9 @@ function Pedidos() {
       {getOrdersBySeller.length === 0 ? (
         <p className="mt-5 text-center text-2xl">No hay pedidos aún</p>
       ) : (
-        getOrdersBySeller.map((order) => <Order key={order.id} order={order} />)
+        getOrdersBySeller.map((order) => (
+          <Order key={order.id} order={order} onOrderDeleted={handleOrderDeleted} />
+        ))
       )}
     </>
   );

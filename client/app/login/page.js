@@ -7,10 +7,11 @@ import { gql, useMutation } from "@apollo/client";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 
-// Importación de los íconos
+// Importing the icons for showing/hiding the password
 import openEyeIcon from '/public/icons/open_eye.png';
 import closedEyeIcon from '/public/icons/closed_eye.png';
 
+// GraphQL mutation for authenticating the user
 const USER_AUTH = gql`
   mutation AuthUser($input: AuthInput) {
     authUser(input: $input) {
@@ -27,8 +28,9 @@ function Login() {
   );
 
   const router = useRouter();
-  const [AuthUser] = useMutation(USER_AUTH);
+  const [AuthUser] = useMutation(USER_AUTH); // Mutation hook for user authentication
 
+  // Formik configuration for form handling and validation
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -53,13 +55,15 @@ function Login() {
           },
         });
 
+        // Extract the token from the response and set it as a cookie
         const { token } = data.authUser;
         const expires = new Date();
         expires.setHours(expires.getHours() + 3);
 
         setCookie("session-token", token, { expires, hhtpOnly: true });
-        router.push("/");
+        router.push("/"); // Redirect to the homepage after successful login
       } catch (error) {
+        // Display an error message if the login fails
         setColour(
           "bg-red-300 py-2 px-3 w-full my-3 max-w-sm text-center mx-auto"
         );

@@ -7,11 +7,10 @@ import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { setCookie } from "cookies-next";
 
-
-// Importación de los íconos
 import openEyeIcon from "/public/icons/open_eye.png";
 import closedEyeIcon from "/public/icons/closed_eye.png";
 
+// GraphQL mutation to create a new user account
 const NEW_ACCOUNT = gql`
   mutation newUser($input: UserInput) {
     newUser(input: $input) {
@@ -23,6 +22,7 @@ const NEW_ACCOUNT = gql`
   }
 `;
 
+// GraphQL mutation to authenticate the user
 const USER_AUTH = gql`
   mutation AuthUser($input: AuthInput) {
     authUser(input: $input) {
@@ -39,8 +39,8 @@ function SignIn() {
     "bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto"
   );
 
-  const [newUser] = useMutation(NEW_ACCOUNT);
-  const [AuthUser] = useMutation(USER_AUTH);
+  const [newUser] = useMutation(NEW_ACCOUNT); // Mutation hook for creating a new user
+  const [AuthUser] = useMutation(USER_AUTH); // Mutation hook for authenticating the user
 
   const router = useRouter();
 

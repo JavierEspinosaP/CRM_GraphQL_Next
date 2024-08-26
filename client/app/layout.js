@@ -25,7 +25,6 @@ export default function RootLayout({ children }) {
         <ApolloWrapper>
           <OrdersState>
             <div className="bg-gray-200 min-h-screen flex flex-col sm:flex-row">
-              {/* <Sidebar className="w-full sm:w-1/4 lg:w-1/5" /> */}
               <SidebarBurger />
               <main className="bg-gray-200 min-h-screen p-5 w-full flex flex-col">
               <div className="w-full max-w-6xl mx-auto">

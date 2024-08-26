@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import Header from "../components/Header";
 import Product from "../components/Product";
@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { hasCookie } from "cookies-next";
 
+// GraphQL query to get products
 const GET_PRODUCTS = gql`
   query getProducts {
     getProducts {
@@ -20,30 +21,38 @@ const GET_PRODUCTS = gql`
 `;
 
 function Productos() {
-  const cookie = hasCookie("session-token");
-
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
 
-  const { data, loading, error } = useQuery(GET_PRODUCTS, {
-    fetchPolicy: "network-only",
-    nextFetchPolicy: "cache-first",
-  });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Set isClient to true when the component mounts
   useEffect(() => {
-    if (!cookie) {
-      return router.push("/login");
-    }
+    setIsClient(true); 
   }, []);
 
-  if (!cookie) {
-    // Evita el renderizado hasta que se complete el redireccionamiento
-    return null;
+  const cookie = hasCookie("session-token");
+
+  useEffect(() => {
+    if (isClient && !cookie) {
+      router.push("/login");
+    }
+  }, [isClient, cookie, router]);
+
+  // Use the GET_PRODUCTS query to fetch products
+  const { data, loading, error } = useQuery(GET_PRODUCTS, {
+    fetchPolicy: "network-only", // Always fetch fresh data
+    skip: !isClient || !cookie, // Skip the query if not client-side or no cookie
+  });
+
+  if (!isClient) {
+    return null; // Avoid rendering until client-side is confirmed
   }
 
   return (
     <>
       {loading ? (
         <p className="text-2xl text-gray-800 font-light">Cargando...</p>
+      ) : error ? (
+        <p className="text-2xl text-gray-800 font-light">Error al cargar los productos.</p>
       ) : (
         <>
           <Header />
@@ -66,11 +75,9 @@ function Productos() {
                 </tr>
               </thead>
               <tbody className="bg-white block md:table-row-group">
-                {data.getProducts !== null
-                  ? data.getProducts.map((producto) => (
-                      <Product key={producto.id} producto={producto} />
-                    ))
-                  : null}
+                {data?.getProducts?.map((producto) => (
+                  <Product key={producto.id} producto={producto} />
+                ))}
               </tbody>
             </table>
           </div>

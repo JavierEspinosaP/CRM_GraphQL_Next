@@ -1,10 +1,10 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import OrderContext from "@/app/context/pedidos/ordersContext";
 
 const Total = () => {
+  // Access the order context to get the total amount
   const orderContext = useContext(OrderContext);
   const { total } = orderContext;
-
 
   return (
     <div className="flex items-center mt-5 justify-between bg-gray-300 p-3">

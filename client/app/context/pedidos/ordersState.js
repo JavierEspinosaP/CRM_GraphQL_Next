@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useReducer} from 'react';
+import React, { useReducer } from 'react';
 
 import OrdersContext from './ordersContext';
 import OrdersReducer from './ordersReducer';
@@ -12,75 +12,67 @@ import {
     REFRESH_TOTAL
 } from '../../types';
 
-const OrderState = ({children}) => {
+const OrderState = ({ children }) => {
 
-    //Order state
-
+    // Initial state for orders
     const initialState = {
-        client: {},
-        products: [],
-        total: 0
+        client: {},     // Selected client
+        products: [],   // Selected products
+        total: 0        // Total price of the order
     }
 
-    const [ state, dispatch ] = useReducer(OrdersReducer, initialState)
+    // useReducer hook to manage the state using OrdersReducer
+    const [state, dispatch] = useReducer(OrdersReducer, initialState);
 
-
-    //Modify client
-
+    // Function to add or select a client
     const addClient = (client) => {
         dispatch({
-           type: SELECT_CLIENT,
-           payload: client
-        })
+            type: SELECT_CLIENT,
+            payload: client
+        });
     }
 
-    //Modify Products
-
-    const addProduct = selectedProducts => {
-
+    // Function to add or select products
+    const addProduct = (selectedProducts) => {
         let newState;
 
         if (state.products.length > 0) {
-            //Get of second array, a copy to assign of the first one
+            // Merge the selected products with the existing ones in the state
             newState = selectedProducts.map(product => {
-                const newObj = state.products.find(productState => productState.id === product.id)
-                console.log('NEWOBJ: ',newObj);
-                console.log('PRODUCT: ',product);
-                
+                const existingProduct = state.products.find(productState => productState.id === product.id);
+                console.log('Existing Product: ', existingProduct);
+                console.log('New Product: ', product);
+
                 return {
                     ...product,
-                    ...newObj
-                }
-            })
-        } 
-        else {
-            newState = selectedProducts
+                    ...existingProduct // Preserve the existing state for matching products
+                };
+            });
+        } else {
+            newState = selectedProducts; // If no products exist in state, use the selected products directly
         }
-        
+
         dispatch({
             type: SELECT_PRODUCT,
             payload: newState
         });
-        
     }
 
-    //Modify quantity
+    // Function to update the quantity of a specific product
+    const productsQuantity = (newProduct) => {
+        console.log('Updated Product Quantity: ', newProduct);
 
-    const productsQuantity = newProduct => {
-        console.log('PRODUCTSQUANTITY (NEWPRODUCT): ',newProduct);
-        
-        
         dispatch({
             type: PRODUCT_QUANTITY,
             payload: newProduct
-        })        
+        });
     }
 
-
+    // Function to recalculate the total price of the order
     const refreshTotal = () => {
         dispatch({
             type: REFRESH_TOTAL
-        })    
+        });
     }
 
     return (
@@ -92,11 +84,11 @@ const OrderState = ({children}) => {
             addProduct,
             productsQuantity,
             refreshTotal
-            }}>
+        }}>
             {children}
         </OrdersContext.Provider>
     );
-    
+
 }
 
 export default OrderState;

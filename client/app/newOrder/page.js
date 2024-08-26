@@ -10,10 +10,10 @@ import Swal from "sweetalert2";
 import { hasCookie } from "cookies-next";
 import Header from "../components/Header";
 
-//Order context
-
+// Import the Order context to manage the order state
 import OrderContext from "../context/pedidos/ordersContext";
 
+// GraphQL mutation to create a new order
 const NEW_ORDER = gql`
   mutation newOrder($input: OrderInput) {
     newOrder(input: $input) {
@@ -22,6 +22,7 @@ const NEW_ORDER = gql`
   }
 `;
 
+// GraphQL query to fetch orders by the seller
 const GET_ORDERS = gql`
   query getOrdersBySeller {
     getOrdersBySeller {
@@ -46,33 +47,34 @@ const GET_ORDERS = gql`
 `;
 
 const NewOrder = () => {
+  // Check if the session cookie exists
   const cookie = hasCookie("session-token");
 
   const router = useRouter();
+  // Redirect to the login page if the session cookie is not found
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!cookie) {
       return router.push("/login");
     }
   }, []);
-
+  // Avoid rendering the component until the cookie validation is complete
   if (!cookie) {
-    // Evita el renderizado hasta que se complete el redireccionamiento
     return null;
   }
 
   const [message, setMessage] = useState(null);
-  // Use Context and extract its values
 
+  // Use the OrderContext to extract client, products, and total values
   const orderContext = useContext(OrderContext);
   const { client, products, total } = orderContext;
 
-  //Mutation for create new order
-
+  // Apollo mutation hook to execute the newOrder mutation and refetch the orders after mutation
   const [newOrder] = useMutation(NEW_ORDER, {
     refetchQueries: [{ query: GET_ORDERS }],
   });
 
+  // Function to validate the order before submission
   const validateOrder = () => {
     return !products.every((product) => product.quantity > 0) ||
       total === 0 ||
@@ -81,12 +83,9 @@ const NewOrder = () => {
       : " ";
   };
 
+  // Function to create a new order and handle submission logic
   const createNewOrder = async () => {
     const { id } = client;
-
-    // //Remove not necessary of products
-    // const order = products.map(({__typename, stock, ...product}) => product)
-    // console.log(order);
 
     // Remove unnecessary fields from products and construct the 'pedido' array
     console.log("CANTIDADES DEL PEDIDO: ", products);
@@ -99,6 +98,7 @@ const NewOrder = () => {
     }));
 
     try {
+      // Execute the mutation to create a new order
       const { data } = await newOrder({
         variables: {
           input: {
@@ -108,13 +108,10 @@ const NewOrder = () => {
           },
         },
       });
-      console.log(data);
 
-      //Redirect
-
+      // Redirect to the orders page after successful submission
       router.push("/pedidos");
       //Show alert
-
       Swal.fire("Correcto", "El pedido se registró correctamente", "success");
     } catch (error) {
       setMessage(error.message.replace("GraphQL error: ", ""));

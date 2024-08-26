@@ -8,11 +8,13 @@ function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const router = usePathname();
 
-  // Si la ruta actual es /login o /signup, no renderizar SidebarBurger
+  // Conditionally render SidebarBurger based on the current route
+  // If the current route is /login or /signup, do not render SidebarBurger
   if (router === "/login" || router === "/signup") {
     return null;
   }
 
+  // Toggle sidebar open/closed state
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };

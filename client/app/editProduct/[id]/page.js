@@ -1,5 +1,5 @@
 "use client";
-import {useEffect} from 'react';
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import * as Yup from "yup";
@@ -8,6 +8,7 @@ import { Formik } from "formik";
 import Swal from "sweetalert2";
 import { hasCookie } from "cookies-next";
 
+// GraphQL mutation to update a product's information
 const UPDATE_PRODUCT = gql`
   mutation updateProduct($id: ID!, $input: ProductInput) {
     updateProduct(id: $id, input: $input) {
@@ -18,6 +19,7 @@ const UPDATE_PRODUCT = gql`
   }
 `;
 
+// GraphQL query to fetch a product's details based on its ID
 const GET_PRODUCT = gql`
   query getProduct($id: ID!) {
     getProduct(id: $id) {
@@ -29,35 +31,37 @@ const GET_PRODUCT = gql`
 `;
 
 function EditProduct() {
-  const cookie = hasCookie("session-token");
-
+  // State to track if the component is rendered on the client
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (!cookie) {
-      return router.push("/login");
-    }
-  }, []);
-
-  if (!cookie) {
-    // Evita el renderizado hasta que se complete el redireccionamiento
-    return null;
-  }
-
   const productID = useParams();
 
+  // Effect to set the isClient state to true after the component mounts
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Check if the session cookie exists
+  const cookie = isClient ? hasCookie("session-token") : false;
+
+  // Redirect to the login page if the session cookie is not found
+  useEffect(() => {
+    if (isClient && !cookie) {
+      router.push("/login");
+    }
+  }, [isClient, cookie, router]);
+
+  // Execute the GraphQL query only if the component is rendered on the client
   const { data, loading, error } = useQuery(GET_PRODUCT, {
     variables: {
       id: productID.id,
     },
+    skip: !isClient, // Skip the query until we're sure it's the client
   });
-
-  //Update client
 
   const [updateProduct] = useMutation(UPDATE_PRODUCT);
 
-  //Validation schema
-
+  // Validation schema for the product form using Yup
   const validationSchema = Yup.object({
     nombre: Yup.string()
       .required("El nombre es obligatorio")
@@ -73,20 +77,23 @@ function EditProduct() {
       .typeError("El stock debe ser un número"),
   });
 
-
-  if (loading) {
-    return "Cargando...";
+  // Display loading message if the data is being fetched
+  if (!isClient || loading) {
+    return <p>Cargando...</p>;
+  }
+  // Display an error message if there was an issue fetching the data
+  if (error) {
+    return <p>Error al cargar el producto.</p>;
   }
 
   const { getProduct } = data;
 
-  //Function that update client on db
-
+  // Function to handle the form submission and update the product's info
   const updateProductInfo = async (values) => {
     const { nombre, precio, stock } = values;
 
     try {
-      const { data } = await updateProduct({
+      await updateProduct({
         variables: {
           id: productID.id,
           input: {
@@ -97,11 +104,9 @@ function EditProduct() {
         },
         refetchQueries: [
           { query: GET_PRODUCT, variables: { id: productID.id } },
-        ], // Refresca la consulta después de la mutación
+        ],
       });
-      //Alert
       Swal.fire("Producto actualizado", "", "success");
-      //Back to home
       setTimeout(() => {
         router.push("/productos");
       }, 2000);
@@ -112,21 +117,19 @@ function EditProduct() {
 
   return (
     <>
-    <Header />
-        <section className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-sm px-4 sm:px-0 mx-auto">
-        <h1 className="text-center mb-4">Edit Product</h1>
-  
-        <Formik
-          validationSchema={validationSchema}
-          enableReinitialize
-          initialValues={getProduct}
-          onSubmit={(values) => {
-            updateProductInfo(values);
-          }}
-        >
-          {(props) => {
-            return (
+      <Header />
+      <section className="min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-sm px-4 sm:px-0 mx-auto">
+          <h1 className="text-center mb-4">Edit Product</h1>
+          <Formik
+            validationSchema={validationSchema}
+            enableReinitialize
+            initialValues={getProduct}
+            onSubmit={(values) => {
+              updateProductInfo(values);
+            }}
+          >
+            {(props) => (
               <form
                 className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
                 onSubmit={props.handleSubmit}
@@ -143,19 +146,18 @@ function EditProduct() {
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
                     id="name"
                     type="text"
-                    placeholder="John"
+                    placeholder="Nombre del producto"
                     value={props.values.nombre}
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                   />
+                  {props.touched.nombre && props.errors.nombre ? (
+                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                      <p>{props.errors.nombre}</p>
+                    </div>
+                  ) : null}
                 </div>
-  
-                {props.touched.nombre && props.errors.nombre ? (
-                  <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
-                    <p>{props.errors.nombre}</p>
-                  </div>
-                ) : null}
-  
+
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -166,21 +168,20 @@ function EditProduct() {
                   <input
                     name="precio"
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2"
-                    id="price"
+                    id="precio"
                     type="text"
                     placeholder="Introduce el precio con dos decimales"
                     value={props.values.precio}
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                   />
+                  {props.touched.precio && props.errors.precio ? (
+                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                      <p>{props.errors.precio}</p>
+                    </div>
+                  ) : null}
                 </div>
-  
-                {props.touched.precio && props.errors.precio ? (
-                  <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
-                    <p>{props.errors.precio}</p>
-                  </div>
-                ) : null}
-  
+
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -198,29 +199,25 @@ function EditProduct() {
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                   />
+                  {props.touched.stock && props.errors.stock ? (
+                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
+                      <p>{props.errors.stock}</p>
+                    </div>
+                  ) : null}
                 </div>
-  
-                {props.touched.stock && props.errors.stock ? (
-                  <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-2">
-                    <p>{props.errors.stock}</p>
-                  </div>
-                ) : null}
-  
+
                 <input
                   type="submit"
                   className="bg-gray-700 w-full mt-5 p-2 text-white uppercase hover:bg-gray-900"
-                  value="Save"
+                  value="Guardar"
                 />
               </form>
-            );
-          }}
-        </Formik>
-      </div>
-    </section>
+            )}
+          </Formik>
+        </div>
+      </section>
     </>
-
   );
-  
 }
 
 export default EditProduct;

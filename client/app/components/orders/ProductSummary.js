@@ -2,27 +2,26 @@ import React, { useContext, useState, useEffect } from "react";
 import OrderContext from "@/app/context/pedidos/ordersContext";
 
 const ProductSummary = ({ product }) => {
-  // Orders context
-
+  // Access the order context
   const orderContext = useContext(OrderContext);
   const { productsQuantity, refreshTotal } = orderContext;
 
-  
+  // Local state to manage the quantity of the product
+  const [quantity, setQuantity] = useState(0);
 
-  const [quantity, setQuantity] = useState(0)
-// eslint-disable-next-line react-hooks/exhaustive-deps
+  // Update quantity and refresh the total whenever the quantity changes
   useEffect(() => {
-    refreshQuantity()
-    refreshTotal()
-  }, [quantity])
+    refreshQuantity();
+    refreshTotal();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quantity]);
 
+  // Function to refresh the quantity of the product in the context
   const refreshQuantity = () => {
-    const newProduct = {...product, quantity: Number(quantity)}
+    const newProduct = { ...product, quantity: Number(quantity) };
     console.log('Updated Product:', newProduct); // Debugging
     productsQuantity(newProduct);
-    
-  }
-  
+  };
 
   const { nombre, precio } = product;
 
@@ -35,7 +34,7 @@ const ProductSummary = ({ product }) => {
       <input
         type="number"
         placeholder="Cantidad"
-        className="shadow apperance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus_shadow-outline md:ml-4"
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline md:ml-4"
         onChange={(e) => setQuantity(e.target.value)}
         value={quantity}
       />

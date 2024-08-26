@@ -16,39 +16,42 @@ import { setContext } from '@apollo/client/link/context';
 import Cookies from 'js-cookie';
 
 function makeClient() {
+  // Create an HTTP link to the GraphQL API
   const httpLink = new HttpLink({
-      // https://studio.apollographql.com/public/spacex-l4uc6p/
-      uri: "http://localhost:4000/",
+    uri: "http://localhost:4000/",
   });
 
+  // Middleware to add the authorization token to headers
   const authLink = setContext((_, { headers }) => {
-    
-    //get session cookie
+    // Retrieve the session token from cookies
+    const token = Cookies.get('session-token');
 
-    const token = Cookies.get('session-token')
-
+    // Return the headers with the authorization token if available
     return {
       headers: {
         ...headers,
-        authorization: token ? `Bearer ${token}` : ''
-      }
-    }
+        authorization: token ? `Bearer ${token}` : '',
+      },
+    };
   });
 
+  // Create a new Apollo Client instance with SSR support
   return new NextSSRApolloClient({
     cache: new NextSSRInMemoryCache(),
     link:
       typeof window === "undefined"
         ? ApolloLink.from([
+            // Use SSRMultipartLink for handling server-side rendering
             new SSRMultipartLink({
-              stripDefer: true,
+              stripDefer: true, // Strips @defer directives
             }),
-            authLink.concat(httpLink),
+            authLink.concat(httpLink), // Add the auth link before the HTTP link
           ])
-        : authLink.concat(httpLink),
+        : authLink.concat(httpLink), // Client-side link chain
   });
 }
 
+// Wrapper component to provide Apollo Client to the React component tree
 export function ApolloWrapper({ children }) {
   return (
     <ApolloNextAppProvider makeClient={makeClient}>
